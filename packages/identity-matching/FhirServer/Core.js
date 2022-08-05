@@ -1,4 +1,5 @@
-import {calculateWeight} from '../lib/MatchUtilties.js'
+import {validateMinimumRequirement, calculateWeight} from '../lib/MatchUtilties.js'
+
 import RestHelpers from './RestHelpers';
 import fhirPathToMongo from './FhirPath';
 
@@ -1413,29 +1414,29 @@ if(typeof serverRouteManifest === "object"){
           let accessTokenStr = (req.params && req.params.access_token) || (req.query && req.query.access_token);
         
           let isAuthorized = parseUserAuthorization(req);
-        
-          if (isAuthorized || process.env.NOAUTH || get(Meteor, 'settings.private.fhir.disableOauth')) {            
+
+          if (isAuthorized || process.env.NOAUTH || get(Meteor, 'settings.private.fhir.disableOauth')) {
 
             if (req.body) {
               let incomingRecord = cloneDeep(req.body);
-      
-              process.env.TRACE && console.log('req.body', req.body); 
-      
+
+              process.env.TRACE && console.log('req.body', req.body);
+
               incomingRecord.resourceType = routeResourceType;
               incomingRecord = RestHelpers.toMongo(incomingRecord);
               incomingRecord = RestHelpers.prepForUpdate(incomingRecord);
-      
-              process.env.DEBUG && console.log('-----------------------------------------------------------'); 
-              process.env.DEBUG && console.log('Received a new record to PATCH into the database', JSON.stringify(newRecord, null, 2));             
-      
+
+              process.env.DEBUG && console.log('-----------------------------------------------------------');
+              process.env.DEBUG && console.log('Received a new record to PATCH into the database', JSON.stringify(newRecord, null, 2));
+
 
               if(typeof Collections[collectionName] === "object"){
                 let numRecordsToUpdate = Collections[collectionName].find({id: req.params.id}).count();
 
-                process.env.DEBUG && console.log('Number of records found matching the id: ', numRecordsToUpdate); 
-                
+                process.env.DEBUG && console.log('Number of records found matching the id: ', numRecordsToUpdate);
+
                 let newlyAssignedId;
-        
+
                 if(numRecordsToUpdate > 1){
                   if(get(Meteor, 'settings.private.debug') === true) { console.log('Found existing records; this is an update interaction, not a create interaction'); }
                   if(get(Meteor, 'settings.private.debug') === true) { console.log(numRecordsToUpdate + ' records found...'); }
@@ -1443,15 +1444,14 @@ if(typeof serverRouteManifest === "object"){
                   if(process.env.DEBUG){
                     console.log('req.query', req.query);
                     console.log('req.params', req.params);
-                    console.log('req.body', req.body);  
+                    console.log('req.body', req.body);
                   }
-                  
+
                   let setObjectPatch = {};
                   Object.keys(req.query).forEach(function(key){
                     setObjectPatch[key] = get(req.body, key);
                   })
 
-                  
                   if(get(Meteor, 'settings.private.debug') === true) { console.log('setObjectPatch', setObjectPatch); }
                   let result = Collections[collectionName].update({id: req.params.id}, {$set: setObjectPatch}, {multi: true});
 
@@ -1476,7 +1476,6 @@ if(typeof serverRouteManifest === "object"){
                   })
                   if(get(Meteor, 'settings.private.debug') === true) { console.log('setObjectPatch', setObjectPatch); }
 
-                  
                   Collections[collectionName].update({_id: setObjectPatch._id}, {$set: setObjectPatch});
 
                   delete setObjectPatch._document;
@@ -1518,7 +1517,7 @@ if(typeof serverRouteManifest === "object"){
         JsonRoutes.add("patch", "/" + fhirPath + "/" + routeResourceType + "/:id", function (req, res, next) {
           res.setHeader('Content-type', 'application/fhir+json;charset=utf-8');
           res.setHeader("ETag", fhirVersion);
-          
+
           JsonRoutes.sendResult(res, {
             code: 501
           });
@@ -1534,7 +1533,6 @@ if(typeof serverRouteManifest === "object"){
 
           process.env.TRACE && console.log('req', req);
           preParse(req);
-          
 
           res.setHeader('Content-type', 'application/fhir+json;charset=utf-8');
           res.setHeader("ETag", fhirVersion);
@@ -1584,7 +1582,7 @@ if(typeof serverRouteManifest === "object"){
         JsonRoutes.add("delete", "/" + fhirPath + "/" + routeResourceType + "/:id", function (req, res, next) {
           res.setHeader('Content-type', 'application/fhir+json;charset=utf-8');
           res.setHeader("ETag", fhirVersion);
-          
+
           JsonRoutes.sendResult(res, {
             code: 501
           });
@@ -1598,7 +1596,6 @@ if(typeof serverRouteManifest === "object"){
           if(get(Meteor, 'settings.private.debug') === true) { console.log('================================================================'); }
           if(get(Meteor, 'settings.private.debug') === true) { console.log('POST /' + fhirPath + '/' + routeResourceType + '/' + JSON.stringify(req.query)); }
 
-          
           preParse(req);
 
           process.env.DEBUG && console.log('---------------------------------------')
@@ -1611,7 +1608,7 @@ if(typeof serverRouteManifest === "object"){
             if(Array.isArray(queryParts)){
               result = queryParts.length;
               if(queryParts.length === 2){
-                
+
               }
             }
 
@@ -1639,7 +1636,7 @@ if(typeof serverRouteManifest === "object"){
 
               matchingRecords = Collections[collectionName].find(databaseQuery, {limit: searchLimit}).fetch();
               console.log('matchingRecords', matchingRecords);
-              
+
               let payload = [];
 
               matchingRecords.forEach(function(record){
@@ -1682,21 +1679,22 @@ if(typeof serverRouteManifest === "object"){
               if(typeof get(req, 'body.name') === "string"){
                 weighting = .5;
                 generatedQuery["name"] = {$regex: get(req, 'body.name')}
-              }               
+              }
 
               // full name - weighting: .50
               if(typeof get(req, 'body.name[0].text') === "string"){
                 weighting = .5;
                 generatedQuery["name.text"] = {$regex: get(req, 'body.name[0].text')}
-              }               
+              }
 
               // NPI number - weighting: .99
               if(typeof get(req, 'body.identifier[0].value') === "string"){
                 weighting = .99;
                 generatedQuery["identifier.value"] = get(req, 'body.identifier[0].value')
-              } 
+              }
 
 			  console.log('weight:', calculateWeight(matchParams));
+			  console.log('validate minimum requirement:', validateMinimumRequirement(matchParams));
               console.log('generatedQuery', generatedQuery);
               matchingRecords = Collections[collectionName].find(generatedQuery).fetch();
               console.log('matchingRecords.length', matchingRecords.length);
@@ -1744,19 +1742,19 @@ if(typeof serverRouteManifest === "object"){
                     }
                   });
                 });
-  
+
                 console.log('payload', payload);
 
                 let payloadBundle = Bundle.generate(payload);
-                
-  
+
+
                 // Success
                 JsonRoutes.sendResult(res, {
                   code: 200,
                   data: payloadBundle
-                }); 
+                });
               }
-            } 
+            }
             //==============================================================================
 
             // console.log('payload', payload);
@@ -1788,7 +1786,7 @@ if(typeof serverRouteManifest === "object"){
 
 
           preParse(req);
-          
+
           process.env.DEBUG && console.log('--------------------------------------')
           process.env.DEBUG && console.log('Checking for chained queries (GET)....')
           process.env.DEBUG && console.log('req.query', req.query);
@@ -1798,17 +1796,16 @@ if(typeof serverRouteManifest === "object"){
             if(Array.isArray(queryParts)){
               result = queryParts.length;
               if(queryParts.length === 2){
-                
+
               }
             }
 
             return result;
           })
 
-          
 
           res.setHeader('Content-type', 'application/fhir+json;charset=utf-8');
-          
+
           let isAuthorized = parseUserAuthorization(req);
 
           if (isAuthorized || process.env.NOAUTH || get(Meteor, 'settings.private.fhir.disableOauth')) {
@@ -1855,7 +1852,7 @@ if(typeof serverRouteManifest === "object"){
         });
       }
 
-      
+
     }
   });
 
