@@ -15,7 +15,7 @@ cd identity-matching-server.git
 npm ci
 
 # launch server
-meteor run --setings configs/settings.nodeonfhir.localhost.json
+meteor run --settings configs/settings.nodeonfhir.localhost.json
 
 # now open http://localhost:3000/ to make sure its runnning
 ```

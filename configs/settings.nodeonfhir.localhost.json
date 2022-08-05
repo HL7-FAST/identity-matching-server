@@ -168,6 +168,8 @@
     }
   },
   "private": {
+	"x509": {
+	},
     "fhir": {
       "disableOauth": true,
       "schemaValidation": {

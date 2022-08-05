@@ -205,7 +205,7 @@ function parseUserAuthorization(req){
       let encodedAuth = get(req, "headers.authorization");
       let decodedAuth = base64url.decode(encodedAuth.replace("Basic ", ""))
       console.log('decodedAuth: ' + decodedAuth)
-  
+
       let authParts = decodedAuth.split(":");
       if(authParts[0] && Collections["OAuthClients"]){
         let clientRegistration = Collections["OAuthClients"].findOne({client_id: authParts[0]})
@@ -291,7 +291,7 @@ function signProvenance(record){
   var token = jwt.sign(JSON.stringify(record), privateKey, { algorithm: 'RS256'})
 
   let provenanceRecord = {
-    resourceType: "Provenance",                  
+    resourceType: "Provenance",
     target: [],
     signature: [{
       type: [{
@@ -301,7 +301,7 @@ function signProvenance(record){
       }],
       when: new Date(),
       who: {
-        display: 'National Directory'
+        display: 'Identity Matching RI'
       },
       data: token
     }]
@@ -312,13 +312,13 @@ function signProvenance(record){
       provenanceRecord.target.push({
         reference: get(rec, 'id'),
         type: get(rec, 'referenceId'),
-      });  
+      });
     })
   } else {
     provenanceRecord.target.push({
       reference: get(record, 'id'),
       type: get(record, 'referenceId'),
-    });  
+    });
   }
 
   return JSON.stringify(provenanceRecord)
@@ -330,7 +330,7 @@ async function exportToIpfsNode(){
     "issue" : [{ // R!  A single issue associated with the action
       "severity" : "information", // R!  fatal | error | warning | information
       "code" : "informational", // R!  Error or warning code
-      "details" : { 
+      "details" : {
         "text": await ipfsNode.add(jsonPayload),
         "coding": [{
           "system": "http://terminology.hl7.org/CodeSystem/operation-outcome",
@@ -412,14 +412,14 @@ if(typeof serverRouteManifest === "object"){
     })
 
     if(Array.isArray(serverRouteManifest[routeResourceType].interactions)){
-      
+
       // vread 
       // https://www.hl7.org/fhir/http.html#vread
       if(serverRouteManifest[routeResourceType].interactions.includes('vread')){
-        
+
         JsonRoutes.add("get", "/" + fhirPath + "/" + routeResourceType + "/:id/_history/:versionId", function (req, res, next) {
           if(get(Meteor, 'settings.private.debug') === true) { console.log('> GET /' + fhirPath + '/' + routeResourceType + '/' + req.params.id + '/_history/' + + req.params.versionId); }
-  
+
           preParse(req);
 
           res.setHeader("content-type", 'application/fhir+json;charset=utf-8');
@@ -433,13 +433,13 @@ if(typeof serverRouteManifest === "object"){
             process.env.DEBUG && console.log('req.params', req.params)
 
             let record = Collections[collectionName].findOne({
-              'id': get(req, 'params.id'), 
+              'id': get(req, 'params.id'),
               'meta.versionId': get(req, 'params.versionId')
-            });            
+            });
             if(get(Meteor, 'settings.private.trace') === true) { console.log('record', record); }
-            
+
             res.setHeader("Last-Modified", moment(get(record, 'meta.lastUpdated')).toDate());
-            
+
             if(record){
               // Success
               JsonRoutes.sendResult(res, {
@@ -458,7 +458,7 @@ if(typeof serverRouteManifest === "object"){
         JsonRoutes.add("get", "/" + fhirPath + "/" + routeResourceType + "/:id/_history/:versionId", function (req, res, next) {
           res.setHeader('Content-type', 'application/fhir+json;charset=utf-8');
           res.setHeader("ETag", fhirVersion);
-          
+
           JsonRoutes.sendResult(res, {
             code: 501
           });
@@ -471,7 +471,7 @@ if(typeof serverRouteManifest === "object"){
         // read
         JsonRoutes.add("get", "/" + fhirPath + "/" + routeResourceType + "/:id", function (req, res, next) {
           if(get(Meteor, 'settings.private.debug') === true) { console.log('GET /' + fhirPath + '/' + routeResourceType + '/' + req.params.id); }
-  
+
           preParse(req);
 
           res.setHeader("content-type", 'application/fhir+json;charset=utf-8');
@@ -493,7 +493,7 @@ if(typeof serverRouteManifest === "object"){
             if(req.params.id === "$export"){
 
               console.log(collectionName + " records: " + Collections[collectionName].find().count());
-              
+
               if(["json", "application/json", "application/fhir+json", "bundle", "Bundle"].includes(get(req, 'query._outputFormat'))){
                 let jsonPayload = [];
 
@@ -503,7 +503,7 @@ if(typeof serverRouteManifest === "object"){
                     resource: RestHelpers.prepForFhirTransfer(record)
                   });
                 });
-  
+
                 process.env.DEBUG && console.log('jsonPayload', jsonPayload);
 
                 res.setHeader('Content-disposition', 'attachment; filename=' + collectionName + ".fhir");
@@ -514,22 +514,22 @@ if(typeof serverRouteManifest === "object"){
                   code: 200,
                   data: Bundle.generate(jsonPayload)
                 });
-                
-                
+
+
               } else if(["ipfs"].includes(get(req, 'query._outputFormat'))){
                 let jsonPayload = [];
 
                 Collections[collectionName].find(defaultQuery, defaultOptions).forEach(function(record){
                   jsonPayload.push(RestHelpers.prepForFhirTransfer(record));
                 });
-  
+
                 jsonPayload.push(signProvenance(jsonPayload));
 
                 process.env.DEBUG && console.log('jsonPayload', jsonPayload);
 
                 if(process.env.ENABLE_IPFS){
 
-                  if(get(req, 'query.cis')){                    
+                  if(get(req, 'query.cis')){
                     // Success
                     JsonRoutes.sendResult(res, {
                       code: 200,
@@ -552,24 +552,24 @@ if(typeof serverRouteManifest === "object"){
                       "resourceType": "OperationOutcome",
                       "issue" : [{ // R!  A single issue associated with the action
                         "severity" : "error", // R!  fatal | error | warning | information
-                        "code" : "please set ENABLE_IPFS=true to enable this functionality", // R!  Error or warning code                        
+                        "code" : "please set ENABLE_IPFS=true to enable this functionality", // R!  Error or warning code
                       }]
                     }
                   });
                 }
 
-                
-                
+
+
               // if(["ndjson", "application/ndjson", "application/fhir+ndjson"].includes(get(req, 'query._outputFormat'))){
               } else {
                 let ndJsonPayload = "[";
 
                 res.setHeader("content-type", 'application/ndjson');
                 res.setHeader('Content-disposition', 'attachment; filename=' + collectionName + ".ndjson");
-                
+
                 Collections[collectionName].find().forEach(function(record, index){
-                  res.write( JSON.stringify(RestHelpers.prepForFhirTransfer(record)) + "\n" );                  
-                });  
+                  res.write( JSON.stringify(RestHelpers.prepForFhirTransfer(record)) + "\n" );
+                });
 
                 // Success
                 JsonRoutes.sendResult(res, {
@@ -584,7 +584,7 @@ if(typeof serverRouteManifest === "object"){
 
               // plain ol regular approach
               if(get(Meteor, 'settings.private.debug') === true) { console.log('records', records); }
-  
+
               // could we find it?
               if(Array.isArray(records)){
                 if(records.length === 0){
