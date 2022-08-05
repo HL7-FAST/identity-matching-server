@@ -1,4 +1,4 @@
-
+import {calculateWeight} from '../lib/MatchUtilties.js'
 import RestHelpers from './RestHelpers';
 import fhirPathToMongo from './FhirPath';
 
@@ -1674,7 +1674,7 @@ if(typeof serverRouteManifest === "object"){
               console.log('req.body.parameter[0]', get(req, 'body.parameter[0].resource'));
               let matchParams = get(req, 'body.parameter[0].resource');
               let fullName = get(matchParams, 'name[0].family') + get(matchParams, 'name[0].given[0]');
-              console.log('name:', fullName);
+              //console.log('name:', fullName);
               let generatedQuery = {};
               let weighting = 0;
 
@@ -1695,8 +1695,8 @@ if(typeof serverRouteManifest === "object"){
                 weighting = .99;
                 generatedQuery["identifier.value"] = get(req, 'body.identifier[0].value')
               } 
-              
 
+			  console.log('weight:', calculateWeight(matchParams));
               console.log('generatedQuery', generatedQuery);
               matchingRecords = Collections[collectionName].find(generatedQuery).fetch();
               console.log('matchingRecords.length', matchingRecords.length);
@@ -1717,7 +1717,7 @@ if(typeof serverRouteManifest === "object"){
                         "value": "MSG_NO_MATCH",
                         "display": "No Resource found matching the query"
                       }
-                    }                
+                    }
                   }
                 });
               } else {
