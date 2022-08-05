@@ -1,8 +1,5 @@
 # UDAP Security and Identity Matching Server
 
-[![CircleCI](https://circleci.com/gh/symptomatic/node-on-fhir.svg?style=svg)](https://circleci.com/gh/symptomatic/node-on-fhir)
-![NodeOnFHIR-Honeycomb2](https://user-images.githubusercontent.com/675910/143236128-33794cb2-c470-4196-b6af-37f44616c59d.png)
-
 This application is a FHIR reference implementation server for the [security](http://build.fhir.org/ig/HL7/fhir-udap-security-ig/) and [identity matching](http://build.fhir.org/ig/HL7/fhir-identity-matching-ig/) implementation guides.
 
 ## Quickstart
