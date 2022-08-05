@@ -1,6 +1,6 @@
 {
-  "name": "node-on-fhir",
-  "version": "0.6.5",
+  "name": "identity-matching-server",
+  "version": "1.0.0",
   "private": true,
   "meteor": {
     "mainModule": {
@@ -15,9 +15,9 @@
     "test-app": "TEST_WATCH=1 meteor test --full-app --driver-package meteortesting:mocha",
     "visualize": "meteor --production --extra-packages bundle-visualizer",
     "lint": "eslint --ext .js,.jsx .",
-    "start": "NODE_ENV=test meteor --settings configs/settings.dev.json",
-    "debug": "DEBUG=true meteor --settings configs/settings.dev.json",
-    "trace": "DEBUG=true TRACe=true meteor --settings configs/settings.dev.json",
+    "start": "NODE_ENV=test meteor --settings configs/settings.nodeonfhir.localhost.json",
+    "debug": "DEBUG=true meteor --settings configs/settings.nodeonfhir.localhost.json",
+    "trace": "DEBUG=true TRACe=true meteor --settings configs/settings.nodeonfhir.localhost.json",
     "package-verification": "starrynight run-tests --type package-verification",
     "verification": "starrynight run-tests --type verification",
     "validation": "starrynight run-tests --type validation",

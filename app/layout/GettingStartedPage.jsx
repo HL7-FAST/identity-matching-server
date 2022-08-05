@@ -196,13 +196,11 @@ function GettingStartedPage(props){
 
           </Grid>
 
-            <Button variant="contained" color="secondary" className={classes.tip_of_the_day} >
-              <Icon icon={lightbulbO} size={24} /><CardHeader title="Getting Started Tip" subheader="Use ⌘+ and ⌘- to zoom in and out." style={{padding: '20px'}} />
+            <Button style={{textTransform: "none"}} variant="contained" color="primary" className={classes.tip_of_the_day} 
+					onClick={() => {window.open("/baseR4/metadata/", "_blank");}}>
+              <h1>Go to /baseR4/metadata for compatability statement</h1>
             </Button>
 
-            {/* <Button variant="contained" color="secondary" className={classes.fallout_button} href="https://github.com/symptomatic/covid19-on-fhir" >
-              <Icon icon={warning} size={24} /><CardHeader title="Announcement" subheader="Due to pandemic, we have discontinued the old example plugin, and will now be offering Covid19-on-FHIR as the example." />
-            </Button> */}
             <StyledCard margin={20} style={{marginBottom: '20px'}}>
               <div style={{width: '100%', textAlign: 'center'}}>
                 <img src='/node-on-fhir-logo-thin.png' style={{width: '400px'}} alt="Node on FHIR Logo" />

@@ -1,6 +1,6 @@
 {
   "public": {
-    "title": "Node on FHIR",
+    "title": "UDAP Security & Identity Matching Reference Implementation",
     "fhirVersion": "R4",
     "smartOnFhir": [{
       "vendor": "SmartHealth IT",
@@ -11,28 +11,32 @@
       "iss": "https://launch.smarthealthit.org/v/r3/sim/eyJoIjoiMSIsImIiOiJmMDQ2MjkzNi1lYjRiLTRkYTEtYjQ1YS1mYmQ5NmViZjhjY2IiLCJlIjoic21hcnQtUHJhY3RpdGlvbmVyLTcxNjE0NTAyIn0/fhir"
     }],
     "theme": {
-      "showVideoBackground": false,
+      "showVideoBackground": true,
       "defaultVideo": "/VideoBackgrounds/GrayWaves.mp4",
       "backgroundImagePath": "/backgrounds/medical/Gradient.jpg",
       "palette": {
-        "primaryColor": "rgb(108, 183, 110)",
+        "primaryColor": "#2a5a6e",
         "primaryText": "rgba(255, 255, 255, 1) !important",
-      
+
         "secondaryColor": "#fdb813",
         "secondaryText": "rgba(255, 255, 255, 1) !important",
-      
+
         "cardColor": "#ffffff !important",
         "cardTextColor": "rgba(0, 0, 0, 1) !important",
-      
+
         "errorColor": "rgb(128,20,60) !important",
         "errorText": "#ffffff !important",
-      
-        "appBarColor": "repeating-linear-gradient( 135deg, rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.45) 5px, rgba(0, 0, 0, 0.5) 10px, rgba(0, 0, 0, 0.5) 10px ), url(http://s3-us-west-2.amazonaws.com/s.cdpn.io/3/old_map_@2X.png)",
+
+        "old-appBarColor": "repeating-linear-gradient( 135deg, rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.45) 5px, rgba(0, 0, 0, 0.5) 10px, rgba(0, 0, 0, 0.5) 10px ), url(http://s3-us-west-2.amazonaws.com/s.cdpn.io/3/old_map_@2X.png)",
+
+		"appBarColor": "linear-gradient(to right, #2C5364, #203A43, #0F2027)",
+
+
         "appBarTextColor": "#ffffff !important",
-      
+
         "paperColor": "#ffffff !important",
         "paperTextColor": "rgba(0, 0, 0, 1) !important",
-      
+
         "backgroundCanvas": "#e6e6e6",
         "background": "linear-gradient(45deg, rgb(108, 183, 110) 30%, rgb(150, 202, 144) 90%)",
 
@@ -126,11 +130,11 @@
       }
     },
     "meshNetwork": {
-      "upstreamSync": "http://meteor-on-fhir.meteorapp.com/fhir-3.0.0", 
+      "upstreamSync": "http://meteor-on-fhir.meteorapp.com/fhir-3.0.0",
       "autosync": false,
       "magnets": []
     },
-    "accountsServer": {      
+    "accountsServer": {
       "database": "meteor",
       "host": "http://localhost",
       "port": 3000
