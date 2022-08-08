@@ -15,9 +15,10 @@ DELETE_PATIENT_URL = "http://127.0.0.1:3000/baseR4/Patient/:id" # assumes DELETE
 
 # iterate through fixtures/*.json
 def for_each_json_fixture(&block)
-	DIR.each_child( File.join(__dir__, "fixtures") ) do |filename|
+	Dir.each_child( File.join(__dir__, "fixtures") ) do |filename|
+		path = File.join(__dir__, "fixtures", filename)
 		if filename.end_with? '.json'
-			json = File.read(filename);
+			json = File.read(path)
 			yield(filename, json)
 		end
 	end
@@ -29,7 +30,8 @@ end
 desc "Print help information for Rake (Ruby Make)"
 task :help do
 	puts <<~EOS
-		Rake (Ruby Make) tasks for Identity Matching Server at #{BASE}
+		Rake (Ruby Make) tasks for Identity Matching Server.
+		Go to #{__FILE__} and set your server endpoints.
 		First launch server as listed in README, then run the commands below as needed:
 
 		$ rake --tasks
@@ -49,7 +51,7 @@ desc "create FHIR patients from fixtures/ into server database"
 task :seed do
 	for_each_json_fixture do |filename, json|
 		print "Creating #{filename} ... "
-		response = RestClient.post(CREATE_PATIENT_URL, json, {'Content-Type' => 'application/fhir+json', 'Content-Length' => data.length})
+		response = RestClient.post(CREATE_PATIENT_URL, json, {'Content-Type' => 'application/fhir+json', 'Content-Length' => json.length})
 		if response.code in [200, 201]
 			print "success (code = #{response.code})\n"
 		else

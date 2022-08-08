@@ -2,9 +2,9 @@
 	"resourceType": "Patient",
 	"id": "2",
 	"text": {
-		"status": "additional"
+		"status": "additional",
 		"div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">Jane Doe 1991-12-31, minimalized example patient.</div>"
-	}
+	},
 	"name": [{
 		"family": "Doe",
 		"given": [
