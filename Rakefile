@@ -52,7 +52,7 @@ task :seed do
 	for_each_json_fixture do |filename, json|
 		print "Creating #{filename} ... "
 		response = RestClient.post(CREATE_PATIENT_URL, json, {'Content-Type' => 'application/fhir+json', 'Content-Length' => json.length})
-		if response.code in [200, 201]
+		if response.code >= 200 && response.code < 300 or (response.code == 303)
 			print "success (code = #{response.code})\n"
 		else
 			print "failed (code = #{response.code})\n"
@@ -66,6 +66,11 @@ task :drop do
 		id = JSON.parse(json).fetch("id")
 		raise "Error - FHIR artifact #{filename} must have id" if !id
 		delete_url = DELETE_PATIENT_URL.gsub(':id', id)
-		RestClient.delete(delete_url)
+		response = RestClient.delete(delete_url)
+		if response.code >= 200 && response.code < 300 or (response.code == 303)
+			puts "Success DELETE #{delete_url}"
+		else
+			puts "Error DELETE #{delete_url} for #{filename}"
+		end
 	end
 end
