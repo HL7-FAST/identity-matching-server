@@ -116,7 +116,7 @@ const Server = {
         "url": "http://fhir-registry.smarthealthit.org/StructureDefinition/oauth-uris"
       })
     }
-    
+
     if (has(Meteor, 'settings.private.fhir.rest')) {
       Object.keys(Meteor.settings.private.fhir.rest).forEach(function(key){
         let newResourceStatement = {
@@ -151,16 +151,35 @@ const Server = {
           })
         }
 
+		// add Operations to CapabilityStatement
+		if (Array.isArray(Meteor.settings.private.fhir.rest[key].operations)) {
+		  newResourceStatement.operation = [];
+		  Meteor.settings.private.fhir.rest[key].operations.forEach(function(item)){
+			if( has(item, "documentation") ) {
+				newResourceStatement.operation.push({
+					"code": item.code,
+					"definition": item.definition,
+					"documentation": item.documentation
+				})
+			}
+			else {
+				newResourceStatement.operation.push({
+					"code": item.code,
+					"definition": item.definition
+				})
+			}
+		  }
+		}
 
         CapabilityStatement.rest[0].resource.push(newResourceStatement);
-      })      
+      })
     }
     return CapabilityStatement;
   },
   getWellKnownSmartConfiguration: function(){
     let response = {
       "resourceType": "Basic",
-      
+
       // required fields
       "authorization_endpoint": Meteor.absoluteUrl() + get(Meteor, 'settings.private.fhir.security.authorizationEndpoint', "oauth/authorize"),
       "token_endpoint":  Meteor.absoluteUrl() + get(Meteor, 'settings.private.fhir.security.tokenEndpoint', "oauth/token") ,
@@ -185,7 +204,7 @@ const Server = {
   getWellKnownUdapConfiguration: function(){
     let response = {
       "resourceType": "UdapMetadata",
-      "x5c": [],      
+      "x5c": [],
       "udap_versions_supported": ["1"],
       "udap_certifications_supported": ["https://vhdir.meteorapp.com/udap/profiles/example-certification"],
       "udap_certifications_required": ["https://vhdir.meteorapp.com/udap/profiles/example-certification"],
@@ -214,7 +233,7 @@ const Server = {
       "udap_profiles_supported": ["udap_authz", "udap_dcr"],
       "udap_authorization_extensions_supported": [],
       "udap_authorization_extensions_required": [],
-      "signed_endpoints": []      
+      "signed_endpoints": []
     }
 
     let fhirRestEndpoints = get(Meteor, 'settings.private.fhir.rest');
@@ -227,8 +246,6 @@ const Server = {
     let x509publicKey = get(Meteor, 'settings.private.x509.publicKey');
     console.log('x509publicKey', x509publicKey)
     response.x5c.push(x509publicKey)
-
-
 
     return response;
   }
@@ -253,7 +270,7 @@ Meteor.startup(function() {
     if(process.env.TRACE){
       console.log('return payload', returnPayload);
     }
-   
+
     JsonRoutes.sendResult(res, returnPayload);
   });
 
@@ -270,7 +287,7 @@ Meteor.startup(function() {
     if(process.env.TRACE){
       console.log('return payload', returnPayload);
     }
-   
+
     JsonRoutes.sendResult(res, returnPayload);
   });
 
@@ -290,7 +307,7 @@ Meteor.startup(function() {
     if(process.env.TRACE){
       console.log('return payload', returnPayload);
     }
-   
+
     JsonRoutes.sendResult(res, returnPayload);
   });
 
@@ -309,7 +326,7 @@ Meteor.startup(function() {
     if(process.env.TRACE){
       console.log('return payload', returnPayload);
     }
-   
+
     JsonRoutes.sendResult(res, returnPayload);
   });
 
@@ -328,7 +345,7 @@ Meteor.startup(function() {
     if(process.env.TRACE){
       console.log('return payload', returnPayload);
     }
-   
+
     JsonRoutes.sendResult(res, returnPayload);
   });
 

@@ -26,7 +26,6 @@ import AppContainer from "/app/layout/AppContainer.jsx";
 let accountServerOptions = {};
 if(has(Meteor, 'settings.public.interfaces.accountServer')){
   accountServerOptions = {
-    // apiHost: 'http://localhost:4000',
     apiHost: get(Meteor, 'settings.public.interfaces.accountsServer.host') + ":" + get(Meteor, 'settings.public.interfaces.accountsServer.port'),
     rootPath: '/accounts'
   }
