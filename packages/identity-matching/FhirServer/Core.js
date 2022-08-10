@@ -1342,14 +1342,13 @@ if(typeof serverRouteManifest === "object"){
                   //   if(get(Meteor, 'settings.private.trace') === true) { 
                   //     console.log('newRecord', newRecord); 
                   //   }             
-                  
-                       
+
+
                   // } else {
-                    
+
                   //   Collections[collectionName].update({_id: req.params.id}, {$set: newRecord}, schemaValidationConfig, function(error, result){
                   //     if (error) {
                   //       if(get(Meteor, 'settings.private.trace') === true) { console.log('PUT /fhir/' + routeResourceType + '/' + req.params.id + "[error]", error); }
-          
                   //       // Bad Request
                   //       JsonRoutes.sendResult(res, {
                   //         code: 400,
@@ -1361,16 +1360,16 @@ if(typeof serverRouteManifest === "object"){
                   //       res.setHeader("MeasureReport", fhirPath + "/" + routeResourceType + "/" + result);
                   //       res.setHeader("Last-Modified", new Date());
                   //       res.setHeader("ETag", fhirVersion);
-          
+
                   //       let recordsToUpdate = Collections[collectionName].find({_id: req.params.id});
                   //       let payload = [];
-          
+
                   //       recordsToUpdate.forEach(function(record){
                   //         payload.push(RestHelpers.prepForFhirTransfer(record));
                   //       });
-          
+
                   //       if(get(Meteor, 'settings.private.trace') === true) { console.log("payload", payload); }
-          
+
                   //       // Success!
                   //       JsonRoutes.sendResult(res, {
                   //         code: 200,
@@ -1379,7 +1378,7 @@ if(typeof serverRouteManifest === "object"){
                   //     }
                   //   });    
                   // }                    
-                }  
+                }
               } else {
                 console.log(collectionName + ' collection not found.')
               }
@@ -1405,18 +1404,17 @@ if(typeof serverRouteManifest === "object"){
 
       if(serverRouteManifest[routeResourceType].interactions.includes('patch')){
         JsonRoutes.add("patch", "/" + fhirPath + "/" + routeResourceType + "/:id", function (req, res, next) {
-          process.env.DEBUG && console.log('================================================================'); 
-          process.env.DEBUG && console.log('PATCH /' + fhirPath + '/' + routeResourceType + '/' + req.params.id); 
-        
+          process.env.DEBUG && console.log('================================================================');
+          process.env.DEBUG && console.log('PATCH /' + fhirPath + '/' + routeResourceType + '/' + req.params.id);
           process.env.TRACE && console.log('req', req);
           preParse(req);
-          
+
 
           res.setHeader('Content-type', 'application/fhir+json;charset=utf-8');
           res.setHeader("ETag", fhirVersion);
 
           let accessTokenStr = (req.params && req.params.access_token) || (req.query && req.query.access_token);
-        
+
           let isAuthorized = parseUserAuthorization(req);
 
           if (isAuthorized || process.env.NOAUTH || get(Meteor, 'settings.private.fhir.disableOauth')) {
@@ -1715,7 +1713,7 @@ if(typeof serverRouteManifest === "object"){
 			  }
 
 			  Patients.find().forEach(function (record, idx, cursor) {
-				if( isMatch(record, matchParams) ) {
+				if( isMatch(record, matchParams, 0) ) {
 					console.log("Found matching record at", idx);
 					matchingRecords.push(record);
 					matchScores.push( calculateScore(record, matchParams) );
