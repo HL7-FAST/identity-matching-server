@@ -16,7 +16,7 @@ DELETE_PATIENT_URL = "http://127.0.0.1:3000/baseR4/Patient/:id" # assumes DELETE
 # iterate through fixtures/*.json
 def for_each_json_fixture(&block)
 	Dir.each_child( File.join(__dir__, "fixtures", "patient") ) do |filename|
-		path = File.join(__dir__, "fixtures", filename)
+		path = File.join(__dir__, "fixtures", "patient", filename)
 		if filename.end_with? '.json'
 			json = File.read(path)
 			yield(filename, json)
