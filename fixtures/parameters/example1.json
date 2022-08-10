@@ -1,0 +1,30 @@
+{
+  "resourceType": "Parameters",
+  "id": "example-param-1",
+  "parameter": [
+    {
+      "name": "resource",
+      "resource": {
+        "resourceType": "Patient",
+        "id": "example-1",
+        "meta": {
+			"profile": ["http://hl7.org/fhir/us/identity-matching/StructureDefinition/IDI-Patient"]
+        },
+        "name": [
+          {
+            "family": "Doe",
+            "given": [
+              "Jane"
+            ]
+          }
+        ],
+        "gender": "female",
+        "birthDate": "1991-12-31"
+      }
+    },
+    {
+      "name": "onlyCertainMatches",
+      "valueBoolean": "false"
+    }
+  ]
+}

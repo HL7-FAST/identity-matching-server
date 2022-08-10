@@ -2,6 +2,10 @@
 
 This application is a FHIR reference implementation server for the [security](http://build.fhir.org/ig/HL7/fhir-udap-security-ig/) and [identity matching](http://build.fhir.org/ig/HL7/fhir-identity-matching-ig/) implementation guides.
 
+## Dependencies
+ - [npm](https://www.npmjs.com/)
+ - [bundler](https://bundler.io/)
+
 ## Quickstart
 ```bash
 # make sure you have meteor 2.x installed
@@ -18,7 +22,18 @@ npm ci
 meteor run --settings configs/settings.nodeonfhir.localhost.json
 
 # now open http://localhost:3000/ to make sure its runnning
+
+# seed database with fixtures/patient
+rake seed
+
+# query match endpoint
+# this uses the very handy http command from https://httpie.io/
+http POST "localhost:3000/baseR4/Patient/\$match" "accept:application/fhir+json" @fixtures/parameters/example1.json
 ```
+
+## Matching Logic
+
+See packages/identity_matching/lib/MatchUtilties.js file.
 
 ## Important Links
 - [License](https://github.com/symptomatic/node-on-fhir/blob/master/LICENSE.md)  

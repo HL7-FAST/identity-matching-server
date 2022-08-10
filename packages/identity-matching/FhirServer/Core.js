@@ -1,4 +1,4 @@
-import {validateMinimumRequirement, calculateWeight} from '../lib/MatchUtilties.js'
+import {isMatch, calculateScore, validateMinimumRequirement, calculateWeight} from '../lib/MatchUtilties.js'
 
 import RestHelpers from './RestHelpers';
 import fhirPathToMongo from './FhirPath';
@@ -1668,14 +1668,19 @@ if(typeof serverRouteManifest === "object"){
             //==============================================================================
             // this is operator logic, and will probably need to go into a switch statement
 
-            // post /Organization/$match
+            // post /Patient/$match
             } else if (req.params.param.includes('$match')) {
               console.log("$MATCH!!!!");
 
-              console.log('req.body.parameter[0]', get(req, 'body.parameter[0].resource'));
+              //console.log('req.body.parameter[0]', get(req, 'body.parameter[0].resource'));
               let matchParams = get(req, 'body.parameter[0].resource');
-              let fullName = get(matchParams, 'name[0].family') + get(matchParams, 'name[0].given[0]');
+			  let matchingRecords = [];
+			  let matchScores = []
+
+              //let fullName = get(matchParams, 'name[0].family') + get(matchParams, 'name[0].given[0]');
               //console.log('name:', fullName);
+
+			  /* Original Match
               let generatedQuery = {};
               let weighting = 0;
 
@@ -1697,11 +1702,26 @@ if(typeof serverRouteManifest === "object"){
                 generatedQuery["identifier.value"] = get(req, 'body.identifier[0].value')
               }
 
-			  console.log('weight:', calculateWeight(matchParams));
-			  console.log('validate minimum requirement:', validateMinimumRequirement(matchParams));
               console.log('generatedQuery', generatedQuery);
               matchingRecords = Collections[collectionName].find(generatedQuery).fetch();
               console.log('matchingRecords.length', matchingRecords.length);
+			  */
+
+			  console.log('weight:', calculateWeight(matchParams));
+			  console.log('validate minimum requirement:', validateMinimumRequirement(matchParams));
+			  if( !validateMinimumRequirement(matchParams) ) {
+				console.log("Should reject! because input not valid weight");
+				// TODO - return OperationOutcome and exit
+			  }
+
+			  Patients.find().forEach(function (record, idx, cursor) {
+				if( isMatch(record, matchParams) ) {
+					console.log("Found matching record at", idx);
+					matchingRecords.push(record);
+					matchScores.push( calculateScore(record, matchParams) );
+				}
+			  });
+			  console.log("Final scores:", matchScores);
 
               let payload = [];
 
@@ -1723,12 +1743,12 @@ if(typeof serverRouteManifest === "object"){
                   }
                 });
               } else {
-                matchingRecords.forEach(function(record){
+                matchingRecords.forEach(function(record, index){
                   // console.log('record', get(record, 'name'))
 
                   record.extension = [{
                     url: "https://build.fhir.org/ig/HL7/fhir-directory-attestation/match-quality",
-                    valueDecimal: weighting
+                    valueDecimal: matchScores[index]
                   }];
 
                   delete record.text;

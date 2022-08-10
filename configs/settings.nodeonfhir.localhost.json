@@ -185,8 +185,8 @@
       "rest": {
         "Patient": {
           "interactions": ["read", "create", "update", "delete"],
+		  "operations": ["match"],
           "search": true,
-          "match": true,
           "publication": true
         }
       }
