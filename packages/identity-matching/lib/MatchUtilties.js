@@ -14,6 +14,43 @@ const ERROR_CODES = {
   "profile not met": 2
 };
 
+const MATCHING_SCORE_THRESHOLD = 0.0;
+
+
+// Decide if a Patient record is a match or not
+//    patient: FHIR Patient Resource from database record
+//    params: FHIR Patient Resource from http parameters, already validated
+// returns:
+//    bool
+function isMatch(patient, params) {
+	/* NOTE:
+		The $match operation can decide to return matches based on any score
+		threshold. We compute the matching score against all records and try
+		to return them all to the client. Later the results are sorted and
+		sliced to client-requested limit.
+     */
+	if( calculateScore(patient, params) > MATCHING_SCORE_THRESHOLD ) {
+		return true;
+	}
+}
+
+// Actual $match logic
+// params:
+//    patient: FHIR Patient Resource from database record
+//    params: FHIR Patient Resource from http parameters, already validated
+// returns:
+//    float: true if match, false if not
+function calculateScore(patient, params) {
+	// TODO
+	return 99.9;
+}
+
+
+// Determine if Parameters are valid according to respective IDI Patient Profile requirements
+// params:
+//	  matchParams: FHIR Patient Resource from http parameters
+// returns
+//    bool: true if valid
 function validateMinimumRequirement(matchParams) {
   let profileAssertion = get(matchParams, 'meta.profile[0]');
   switch (profileAssertion) {
@@ -43,6 +80,7 @@ function validateMinimumRequirement(matchParams) {
 
 function calculateWeight(matchParams) {
   return 20;
+
 }
 
 // param patientResource: IDIPatient profile FHIR resource
@@ -73,8 +111,10 @@ function hasName(patientResource) {
 }
 
 // calculateWeight
-// param patientResource: IDIPatient profile FHIR resource
-// returns weight: int
+// params:
+//	 patientResource: IDIPatient profile FHIR resource
+// returns:
+//	 int: weight
 function calculateWeight(patientResource) {
 	let total = 0;
 	let addedMinorIdentifier = false;
@@ -148,5 +188,7 @@ function calculateWeight(patientResource) {
 
 module.exports = {
   validateMinimumRequirement,
-  calculateWeight
+  calculateWeight,
+  calculateScore,
+  isMatch
 }

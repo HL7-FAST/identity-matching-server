@@ -1,4 +1,4 @@
-import {validateMinimumRequirement, calculateWeight} from '../lib/MatchUtilties.js'
+import {isMatch, calculateScore, validateMinimumRequirement, calculateWeight} from '../lib/MatchUtilties.js'
 
 import RestHelpers from './RestHelpers';
 import fhirPathToMongo from './FhirPath';
@@ -17,54 +17,54 @@ import forge from 'node-forge';
 
 import base64url from 'base64-url';
 
-import { 
-  AllergyIntolerances,
-  AuditEvents,
+import {
+  // AllergyIntolerances,
+  // AuditEvents,
   Bundles,
-  CarePlans,
-  CareTeams,
+  // CarePlans,
+  // CareTeams,
   CodeSystems,
-  Communications,
-  CommunicationRequests,
-  Compositions,
-  Conditions,
-  Consents,
-  Devices,
-  DiagnosticReports,
-  DocumentReferences,
-  Encounters,
+  // Communications,
+  // CommunicationRequests,
+  // Compositions,
+  // Conditions,
+  // Consents,
+  // Devices,
+  // DiagnosticReports,
+  // DocumentReferences,
+  // Encounters,
   Endpoints,
-  Goals,
-  HealthcareServices,
-  Immunizations,
-  InsurancePlans,
-  Lists,
-  Locations,
-  Medications,
-  MedicationOrders,
-  Measures,
-  Networks,
-  MeasureReports,
-  Observations,
-  Organizations,
-  OrganizationAffiliations,
+  // Goals,
+  // HealthcareServices,
+  // Immunizations,
+  // InsurancePlans,
+  // Lists,
+  // Locations,
+  // Medications,
+  // MedicationOrders,
+  // Measures,
+  // Networks,
+  // MeasureReports,
+  // Observations,
+  // Organizations,
+  // OrganizationAffiliations,
   Patients,
-  Practitioners,
-  PractitionerRoles,
-  Procedures,
+  // Practitioners,
+  // PractitionerRoles,
+  // Procedures,
   Provenances,
-  Questionnaires,
-  QuestionnaireResponses,
-  Restrictions,
-  RelatedPersons,
-  RiskAssessments,
+  // Questionnaires,
+  // QuestionnaireResponses,
+  // Restrictions,
+  // RelatedPersons,
+  // RiskAssessments,
   SearchParameters,
-  ServiceRequests,
-  StructureDefinitions,
-  Subscriptions,
-  Tasks,
+  // ServiceRequests,
+  // StructureDefinitions,
+  // Subscriptions,
+  // Tasks,
   ValueSets,
-  VerificationResults,
+  // VerificationResults,
   FhirUtilities
 } from 'meteor/clinical:hl7-fhir-data-infrastructure';
 
@@ -694,12 +694,15 @@ if(typeof serverRouteManifest === "object"){
         
         // Search Interaction
         JsonRoutes.add("get", "/" + fhirPath + "/" + routeResourceType, function (req, res, next) {
+		  console.log("DOING SEARCH INTERACTION")
+
           if(get(Meteor, 'settings.private.debug') === true) { console.log('-------------------------------------------------------'); }
           if(get(Meteor, 'settings.private.debug') === true) { console.log('>> GET ' + fhirPath + "/" + routeResourceType, req.query); }
 
-          if(get(Meteor, 'settings.private.debug') === true) { 
-            console.log('Resource Type: ' + routeResourceType);               
+          if(get(Meteor, 'settings.private.debug') === true) {
+            console.log('Resource Type: ' + routeResourceType);
           }
+
 
           // first scan the query for any chained queries
           process.env.DEBUG && console.log('--------------------------------------')
@@ -737,22 +740,22 @@ if(typeof serverRouteManifest === "object"){
                     process.env.DEBUG && console.log('chainedSearchParams.xpath', chainedSearchParams.xpath)
                     process.env.DEBUG && console.log('chainedCollectionName', chainedCollectionName)
                   }
-  
+
                   if(Collections[chainedCollectionName]){
                     let chainedQuery = {};
                     chainedQuery[chainedSearchParams.xpath] = req.query[key]
                     process.env.DEBUG && console.log('chainedQuery', chainedQuery)
-                    
+
                     // map the ids of any records that are found into an array
                     chainedIds = Collections[chainedCollectionName].find(chainedQuery).map(function(record){
                       return softTarget + "/" + record.id;
                     })
-  
+
                     // the create the JOIN equivalent by matching the chain reference 
                     // to any of the ids included in the array
                     mongoQuery[queryParts[0] + ".reference"] = {$in: chainedIds}
                   }
-  
+
                 }
               }
             }
@@ -774,7 +777,7 @@ if(typeof serverRouteManifest === "object"){
             process.env.DEBUG && console.log('xpath:      ' + get(searchParameter, 'xpath'));
             process.env.DEBUG && console.log(' ');
 
-            Object.keys(req.query).forEach(function(queryKey){              
+            Object.keys(req.query).forEach(function(queryKey){
               // for query keys that dont have a value
               // just build a mongo query that searches if the key exists or not
               if(Object.hasOwnProperty(queryKey) && (Object[queryKey] === "")){
@@ -784,11 +787,11 @@ if(typeof serverRouteManifest === "object"){
               } else if(get(searchParameter, 'code') === queryKey){
                 // otherwise, map the fhirpath to mongo
                 Object.assign(mongoQuery, fhirPathToMongo(searchParameter, queryKey, req))
-              }                
-            })       
-            
+              }
+            })
+
             if(get(Meteor, 'settings.private.debug') === true) { console.log('mongoQuery', JSON.stringify(mongoQuery)); }
-          }) 
+          })
 
           process.env.DEBUG && console.log('Original Url:  ' + req.originalUrl)
           process.env.DEBUG && console.log('Generated Mongo query: ', mongoQuery);
@@ -801,7 +804,7 @@ if(typeof serverRouteManifest === "object"){
           // res.setHeader("Access-Control-Allow-Origin", "*");
           res.setHeader('Content-type', 'application/fhir+json;charset=utf-8');
           res.setHeader("ETag", fhirVersion);
-          
+
 
           let isAuthorized = parseUserAuthorization(req);
 
@@ -888,7 +891,6 @@ if(typeof serverRouteManifest === "object"){
                 });  
               }
 
-              
               // Success
               JsonRoutes.sendResult(res, {
                 code: 200,
@@ -899,7 +901,7 @@ if(typeof serverRouteManifest === "object"){
               JsonRoutes.sendResult(res, {
                 code: 501
               });
-            }            
+            }
           } else {
             // Unauthorized
             JsonRoutes.sendResult(res, {
@@ -908,10 +910,12 @@ if(typeof serverRouteManifest === "object"){
           }
         });
       } else {
+		// Standard GET
         JsonRoutes.add("get", "/" + fhirPath + "/" + routeResourceType + "/:id", function (req, res, next) {
+		  console.log("DOING STANDARD GET")
           res.setHeader('Content-type', 'application/fhir+json;charset=utf-8');
           res.setHeader("ETag", fhirVersion);
-          
+
           JsonRoutes.sendResult(res, {
             code: 501
           });
@@ -920,7 +924,7 @@ if(typeof serverRouteManifest === "object"){
         JsonRoutes.add("get", "/" + fhirPath + "/" + routeResourceType, function (req, res, next) {
           res.setHeader('Content-type', 'application/fhir+json;charset=utf-8');
           res.setHeader("ETag", fhirVersion);
-          
+
           JsonRoutes.sendResult(res, {
             code: 501
           });
@@ -1664,14 +1668,19 @@ if(typeof serverRouteManifest === "object"){
             //==============================================================================
             // this is operator logic, and will probably need to go into a switch statement
 
-            // post /Organization/$match
+            // post /Patient/$match
             } else if (req.params.param.includes('$match')) {
               console.log("$MATCH!!!!");
 
-              console.log('req.body.parameter[0]', get(req, 'body.parameter[0].resource'));
+              //console.log('req.body.parameter[0]', get(req, 'body.parameter[0].resource'));
               let matchParams = get(req, 'body.parameter[0].resource');
-              let fullName = get(matchParams, 'name[0].family') + get(matchParams, 'name[0].given[0]');
+			  let matchingRecords = [];
+			  let matchScores = []
+
+              //let fullName = get(matchParams, 'name[0].family') + get(matchParams, 'name[0].given[0]');
               //console.log('name:', fullName);
+
+			  /* Original Match
               let generatedQuery = {};
               let weighting = 0;
 
@@ -1693,11 +1702,26 @@ if(typeof serverRouteManifest === "object"){
                 generatedQuery["identifier.value"] = get(req, 'body.identifier[0].value')
               }
 
-			  console.log('weight:', calculateWeight(matchParams));
-			  console.log('validate minimum requirement:', validateMinimumRequirement(matchParams));
               console.log('generatedQuery', generatedQuery);
               matchingRecords = Collections[collectionName].find(generatedQuery).fetch();
               console.log('matchingRecords.length', matchingRecords.length);
+			  */
+
+			  console.log('weight:', calculateWeight(matchParams));
+			  console.log('validate minimum requirement:', validateMinimumRequirement(matchParams));
+			  if( !validateMinimumRequirement(matchParams) ) {
+				console.log("Should reject! because input not valid weight");
+				// TODO - return OperationOutcome and exit
+			  }
+
+			  Patients.find().forEach(function (record, idx, cursor) {
+				if( isMatch(record, matchParams) ) {
+					console.log("Found matching record at", idx);
+					matchingRecords.push(record);
+					matchScores.push( calculateScore(record, matchParams) );
+				}
+			  });
+			  console.log("Final scores:", matchScores);
 
               let payload = [];
 
@@ -1719,12 +1743,12 @@ if(typeof serverRouteManifest === "object"){
                   }
                 });
               } else {
-                matchingRecords.forEach(function(record){
+                matchingRecords.forEach(function(record, index){
                   // console.log('record', get(record, 'name'))
 
                   record.extension = [{
                     url: "https://build.fhir.org/ig/HL7/fhir-directory-attestation/match-quality",
-                    valueDecimal: weighting
+                    valueDecimal: matchScores[index]
                   }];
 
                   delete record.text;
