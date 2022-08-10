@@ -694,12 +694,15 @@ if(typeof serverRouteManifest === "object"){
         
         // Search Interaction
         JsonRoutes.add("get", "/" + fhirPath + "/" + routeResourceType, function (req, res, next) {
+		  console.log("DOING SEARCH INTERACTION")
+
           if(get(Meteor, 'settings.private.debug') === true) { console.log('-------------------------------------------------------'); }
           if(get(Meteor, 'settings.private.debug') === true) { console.log('>> GET ' + fhirPath + "/" + routeResourceType, req.query); }
 
-          if(get(Meteor, 'settings.private.debug') === true) { 
-            console.log('Resource Type: ' + routeResourceType);               
+          if(get(Meteor, 'settings.private.debug') === true) {
+            console.log('Resource Type: ' + routeResourceType);
           }
+
 
           // first scan the query for any chained queries
           process.env.DEBUG && console.log('--------------------------------------')
@@ -737,22 +740,22 @@ if(typeof serverRouteManifest === "object"){
                     process.env.DEBUG && console.log('chainedSearchParams.xpath', chainedSearchParams.xpath)
                     process.env.DEBUG && console.log('chainedCollectionName', chainedCollectionName)
                   }
-  
+
                   if(Collections[chainedCollectionName]){
                     let chainedQuery = {};
                     chainedQuery[chainedSearchParams.xpath] = req.query[key]
                     process.env.DEBUG && console.log('chainedQuery', chainedQuery)
-                    
+
                     // map the ids of any records that are found into an array
                     chainedIds = Collections[chainedCollectionName].find(chainedQuery).map(function(record){
                       return softTarget + "/" + record.id;
                     })
-  
+
                     // the create the JOIN equivalent by matching the chain reference 
                     // to any of the ids included in the array
                     mongoQuery[queryParts[0] + ".reference"] = {$in: chainedIds}
                   }
-  
+
                 }
               }
             }
@@ -774,7 +777,7 @@ if(typeof serverRouteManifest === "object"){
             process.env.DEBUG && console.log('xpath:      ' + get(searchParameter, 'xpath'));
             process.env.DEBUG && console.log(' ');
 
-            Object.keys(req.query).forEach(function(queryKey){              
+            Object.keys(req.query).forEach(function(queryKey){
               // for query keys that dont have a value
               // just build a mongo query that searches if the key exists or not
               if(Object.hasOwnProperty(queryKey) && (Object[queryKey] === "")){
@@ -784,11 +787,11 @@ if(typeof serverRouteManifest === "object"){
               } else if(get(searchParameter, 'code') === queryKey){
                 // otherwise, map the fhirpath to mongo
                 Object.assign(mongoQuery, fhirPathToMongo(searchParameter, queryKey, req))
-              }                
-            })       
-            
+              }
+            })
+
             if(get(Meteor, 'settings.private.debug') === true) { console.log('mongoQuery', JSON.stringify(mongoQuery)); }
-          }) 
+          })
 
           process.env.DEBUG && console.log('Original Url:  ' + req.originalUrl)
           process.env.DEBUG && console.log('Generated Mongo query: ', mongoQuery);
@@ -801,7 +804,7 @@ if(typeof serverRouteManifest === "object"){
           // res.setHeader("Access-Control-Allow-Origin", "*");
           res.setHeader('Content-type', 'application/fhir+json;charset=utf-8');
           res.setHeader("ETag", fhirVersion);
-          
+
 
           let isAuthorized = parseUserAuthorization(req);
 
@@ -888,7 +891,6 @@ if(typeof serverRouteManifest === "object"){
                 });  
               }
 
-              
               // Success
               JsonRoutes.sendResult(res, {
                 code: 200,
@@ -899,7 +901,7 @@ if(typeof serverRouteManifest === "object"){
               JsonRoutes.sendResult(res, {
                 code: 501
               });
-            }            
+            }
           } else {
             // Unauthorized
             JsonRoutes.sendResult(res, {
@@ -908,10 +910,12 @@ if(typeof serverRouteManifest === "object"){
           }
         });
       } else {
+		// Standard GET
         JsonRoutes.add("get", "/" + fhirPath + "/" + routeResourceType + "/:id", function (req, res, next) {
+		  console.log("DOING STANDARD GET")
           res.setHeader('Content-type', 'application/fhir+json;charset=utf-8');
           res.setHeader("ETag", fhirVersion);
-          
+
           JsonRoutes.sendResult(res, {
             code: 501
           });
@@ -920,7 +924,7 @@ if(typeof serverRouteManifest === "object"){
         JsonRoutes.add("get", "/" + fhirPath + "/" + routeResourceType, function (req, res, next) {
           res.setHeader('Content-type', 'application/fhir+json;charset=utf-8');
           res.setHeader("ETag", fhirVersion);
-          
+
           JsonRoutes.sendResult(res, {
             code: 501
           });
