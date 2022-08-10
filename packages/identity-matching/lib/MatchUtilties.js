@@ -18,11 +18,13 @@ const MATCHING_SCORE_THRESHOLD = 0.0;
 
 
 // Decide if a Patient record is a match or not
+// params:
 //    patient: FHIR Patient Resource from database record
 //    params: FHIR Patient Resource from http parameters, already validated
+//    level: constant that can be used for more fine-tuned control over threshold
 // returns:
 //    bool
-function isMatch(patient, params) {
+function isMatch(patient, params, level) {
 	/* NOTE:
 		The $match operation can decide to return matches based on any score
 		threshold. We compute the matching score against all records and try
