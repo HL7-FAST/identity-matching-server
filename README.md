@@ -31,9 +31,9 @@ rake seed
 http POST "localhost:3000/baseR4/Patient/\$match" "accept:application/fhir+json" @fixtures/parameters/example1.json
 ```
 
-## Matching Logic
+## How it works:
 
-See packages/identity_matching/lib/MatchUtilties.js file.
+This application is MeteorJS app builtin FHIR support and Rake for tooling. The `rake seed` command creates all FHIR patients in fixtures/patients/ in database. The file fixtures/parameters/example1.json is the POST body for an example `/baseR4/Patient/$match` call. File packages/identity-matching/FhirServer/Core.js actually implements the server in NodeJS, with full Patient RESTful CRUD support. All the functionality for `$match` is modularized into packages/identity_matching/lib/MatchUtilties.js file, and the file configs/settings.nodeonfhir.localhost.json controls security features such as enabling OAuth2. OAuth2 is disabled by default.
 
 ## Important Links
 - [License](https://github.com/symptomatic/node-on-fhir/blob/master/LICENSE.md)  
