@@ -17,7 +17,7 @@
     "lint": "eslint --ext .js,.jsx .",
     "start": "NODE_ENV=test meteor --settings configs/settings.nodeonfhir.localhost.json",
     "debug": "DEBUG=true meteor --settings configs/settings.nodeonfhir.localhost.json",
-    "trace": "DEBUG=true TRACe=true meteor --settings configs/settings.nodeonfhir.localhost.json",
+    "trace": "DEBUG=true TRACE=true meteor --settings configs/settings.nodeonfhir.localhost.json",
     "package-verification": "starrynight run-tests --type package-verification",
     "verification": "starrynight run-tests --type verification",
     "validation": "starrynight run-tests --type validation",
