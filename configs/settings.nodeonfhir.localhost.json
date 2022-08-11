@@ -185,12 +185,7 @@
       "rest": {
         "Patient": {
           "interactions": ["read", "create", "update", "delete"],
-          "operations": [
-			{
-				"code": "match",
-				"definition": "http://hl7.org/fhir/OperationDefinition/Patient-match",
-				"documentation": "Patient $match operation that has been extended by Digital Identity and Patient Matching Implementation Guide."}
-          ],
+		  "operations": ["match"],
           "search": true,
           "publication": true
         }

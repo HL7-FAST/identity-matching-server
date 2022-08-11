@@ -7,7 +7,7 @@
     },
     "text" : {
       "status" : "generated",
-      "div" : "<div><!-- Snipped for Brevity --></div>"
+      "div" : "<div>!-- Snipped for Brevity --></div>"
     },
     "extension" : [{
       "url" : "http://hl7.org/fhir/StructureDefinition/structuredefinition-wg",
