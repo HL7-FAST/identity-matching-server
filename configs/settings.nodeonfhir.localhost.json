@@ -186,8 +186,12 @@
         "Patient": {
           "interactions": ["read", "create", "update", "delete"],
           "operations": [
-		  {"code": "match", "definition", "documentation": "Extended Patient Match Operation that supports Identity Matching Implementation Guide.y"}
-	  ],
+            {
+              "code": "match",
+              "definition": " http://hl7.org/fhir/OperationDefinition/Patient-match",
+              "documentation": "Extended Patient Match Operation that supports Identity Matching Implementation Guide."
+            }
+          ],
           "search": true,
           "publication": true
         }
