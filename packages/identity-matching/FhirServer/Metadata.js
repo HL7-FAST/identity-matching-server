@@ -90,15 +90,15 @@ const Server = {
         "extension": [
           {
             "url": "token",
-            "valueUri": Meteor.absoluteUrl() + get(Meteor, 'settings.private.fhir.security.tokenEndpoint', "oauth/token") 
+            "valueUri": Meteor.absoluteUrl() + get(Meteor, 'settings.private.fhir.security.tokenEndpoint', "oauth/token")
           },
           {
             "url": "authorize",
-            "valueUri": Meteor.absoluteUrl() + get(Meteor, 'settings.private.fhir.security.authorizationEndpoint', "oauth/authorize") 
+            "valueUri": Meteor.absoluteUrl() + get(Meteor, 'settings.private.fhir.security.authorizationEndpoint', "oauth/authorize")
           },
           {
             "url": "register",
-            "valueUri": Meteor.absoluteUrl() + get(Meteor, 'settings.private.fhir.security.registrationEndpoint', "oauth/registration") 
+            "valueUri": Meteor.absoluteUrl() + get(Meteor, 'settings.private.fhir.security.registrationEndpoint', "oauth/registration")
           },
           {
             "url": "manage",
@@ -153,7 +153,7 @@ const Server = {
 
 		// add Operations to CapabilityStatement
 		if (Array.isArray(Meteor.settings.private.fhir.rest[key].operations)) {
-		  newResourceStatement.operation = [];
+		  newResourceStatement.operation = []
 		  Meteor.settings.private.fhir.rest[key].operations.forEach(function(item)){
 			if( has(item, "documentation") ) {
 				newResourceStatement.operation.push({
@@ -168,7 +168,7 @@ const Server = {
 					"definition": item.definition
 				})
 			}
-		  }
+		  })
 		}
 
         CapabilityStatement.rest[0].resource.push(newResourceStatement);

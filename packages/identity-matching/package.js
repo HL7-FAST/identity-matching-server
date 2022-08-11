@@ -1,8 +1,8 @@
 Package.describe({
-    name: 'clinical:vault-server',
-    version: '8.4.28',
-    summary: 'Add FHIR API endpoints to your Node on FHIR application.',
-    git: 'https://github.com/clinical-meteor/vault-server'
+    name: 'identity-matching',
+    version: '1.0.0',
+    summary: 'Add FHIR API endpoints and $match operation to your Node on FHIR application, forked from clinical:vault-server v8.4.28',
+    git: 'https://github.com/HL7-FAST/identity-matching-server/tree/development/packages/identity-matching'
 });
 
 Package.onUse(function(api) {
@@ -50,7 +50,7 @@ Package.onUse(function(api) {
     // UDAP
     api.addAssets('certs/EMRDirectTestCA.crt', 'server');
     api.addAssets('certs/EMRDirectTestClientSubCA.crt', 'server');
-    
+
     // DDP autopublish 
     api.addFiles('lib/AccessControl.js');
     api.addFiles('lib/Base64.js');
