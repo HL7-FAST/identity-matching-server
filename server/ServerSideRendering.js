@@ -39,9 +39,9 @@ onPageLoad((sink) => {
 
 
   const htmlString = renderToString(sheets.collect(
-    <ThemeProvider theme={theme} >          
+    <ThemeProvider theme={theme} >
       <AppContainer location={sink.request.url} />
-    </ThemeProvider>  
+    </ThemeProvider>
   ));
 
   // console.log("********:  HTML", htmlString);
@@ -55,10 +55,10 @@ onPageLoad((sink) => {
 
 
   // console.log("********:  HELMET", helmet);
-  
+
   sink.appendToHead(helmet.meta.toString());
   sink.appendToHead(helmet.title.toString());
-  
+
 
   sink.appendToBody(`
     <script>

@@ -7,7 +7,7 @@ import { Meteor } from 'meteor/meteor';
 import { get, has } from 'lodash';
 
 
-import { 
+import {
   AllergyIntolerances,
   Bundles,
   CarePlans,
@@ -15,7 +15,7 @@ import {
   Communications,
   CommunicationRequests,
   Devices,
-  Encounters, 
+  Encounters,
   Endpoints,
   HealthcareServices,
   Immunizations,
@@ -30,7 +30,7 @@ import {
   MeasureReports,
   OrganizationAffiliations,
   Organizations,
-  Observations, 
+  Observations,
   Patients,
   Practitioners,
   PractitionerRoles,
@@ -61,7 +61,7 @@ if(Meteor.isServer){
   Collections.Communications = Communications;
   Collections.CommunicationRequests = CommunicationRequests;
   Collections.CommunicationResponses = CommunicationResponses;
-  Collections.Devices = Devices;  
+  Collections.Devices = Devices;
   Collections.Encounters = Encounters;
   Collections.Endpoints = Endpoints;
   Collections.HealthcareServices = HealthcareServices;
@@ -100,10 +100,10 @@ Meteor.startup(function(){
         return parser.text('every 1 minute');
       },
       job: function() {
-          console.log('TaskManager!  ' + Tasks.find().count() + ' tasks in the Task collection.')     
+          console.log('TaskManager!  ' + Tasks.find().count() + ' tasks in the Task collection.')
       }
     });
-  } 
+  }
   if(get(Meteor, 'settings.private.enableServerStats')){
     SyncedCron.add({
       name: 'Server Stats Generator',
@@ -111,8 +111,8 @@ Meteor.startup(function(){
         return parser.text('every 5 minute');
       },
       job: function() {
-          console.log('Generating server stats!')   
-          
+          console.log('Generating server stats!')
+
           let restEndpoints = get(Meteor, "settings.private.fhir.rest")
           console.log('restEndpoints', restEndpoints)
 
@@ -120,7 +120,7 @@ Meteor.startup(function(){
             "referenceType": "ServerStats",
             "timestamp": new Date
           }
-          
+
           Object.keys(restEndpoints).forEach(function(key){
             // console.log('key', FhirUtilities.pluralizeResourceName(key))
             if(typeof Collections[FhirUtilities.pluralizeResourceName(key)] !== "undefined"){
@@ -135,7 +135,7 @@ Meteor.startup(function(){
           ServerStats.insert(serverStats)
       }
     });
-  }   
+  }
 })
 
 

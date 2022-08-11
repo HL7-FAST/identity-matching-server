@@ -10,7 +10,7 @@ import { check } from 'meteor/check';
 // AccountsServer.config({}); // Config your accounts server
  wrapMeteorServer(Meteor, AccountsServer);
 
- import { 
+ import {
   AllergyIntolerances,
   Bundles,
   CarePlans,
@@ -19,7 +19,7 @@ import { check } from 'meteor/check';
   CommunicationRequests,
   CommunicationResponses,
   Devices,
-  Encounters, 
+  Encounters,
   Immunizations,
   Lists,
   Locations,
@@ -30,7 +30,7 @@ import { check } from 'meteor/check';
   Measures,
   MeasureReports,
   Organizations,
-  Observations, 
+  Observations,
   Patients,
   Procedures,
   Questionnaires,
@@ -61,7 +61,7 @@ if(Meteor.isServer){
   Collections.Communications = Communications;
   Collections.CommunicationRequests = CommunicationRequests;
   Collections.CommunicationResponses = CommunicationResponses;
-  Collections.Devices = Devices;  
+  Collections.Devices = Devices;
   Collections.Encounters = Encounters;
   Collections.Immunizations = Immunizations;
   Collections.Lists = Lists;
@@ -91,15 +91,15 @@ Meteor.methods({
     if(this.userId){
       // check(fhirUrl, String)
       // check(accessToken, Match.Maybe(String));
-  
+
       if(get(Meteor, 'settings.private.proxyServerEnabled')){
-  
+
         console.log('Query Endpoint: ', fhirUrl)
         console.log('AccessToken:    ', accessToken)
-  
+
         let httpHeaders = { headers: {
             'Accept': ['application/json', 'application/fhir+json'],
-            'Access-Control-Allow-Origin': '*'          
+            'Access-Control-Allow-Origin': '*'
         }}
 
         if(get(Meteor, 'settings.private.fhir.fhirServer.auth.bearerToken')){
@@ -116,13 +116,13 @@ Meteor.methods({
 
       } else {
           console.log('==========================================')
-          console.log('ProxyServer:  Disabled.  Please check the Meteor.settings file.')    
+          console.log('ProxyServer:  Disabled.  Please check the Meteor.settings file.')
 
           return "Proxy server disabled."
       }
     } else {
-      console.log('ProxyServer:  Unauthorized request.')   
-      return "Unauthorized." 
+      console.log('ProxyServer:  Unauthorized request.')
+      return "Unauthorized."
     }
 
   },
@@ -142,7 +142,7 @@ Meteor.methods({
       let queryResult;
       let httpHeaders = { headers: {
           'Content-Type': 'application/fhir+json',
-          'Access-Control-Allow-Origin': '*'          
+          'Access-Control-Allow-Origin': '*'
       }}
 
       if(get(Meteor, 'settings.private.interfaces.fhirServer.auth.bearerToken')){
@@ -185,7 +185,7 @@ Meteor.methods({
 
             let response = false;
             // console.log('Collections', Collections)
-            
+
             // console.log('FhirUtilities.pluralizeResourceName: ' + FhirUtilities.pluralizeResourceName(get(proxyInsertEntry, 'resource.resourceType')))
             // the cursor appears to exist
             if(typeof Collections[FhirUtilities.pluralizeResourceName(get(proxyInsertEntry, 'resource.resourceType'))] === "object"){
@@ -198,16 +198,16 @@ Meteor.methods({
                 response = Collections[FhirUtilities.pluralizeResourceName(get(proxyInsertEntry, 'resource.resourceType'))].insert(proxyInsertEntry.resource, {validate: false, filter: false}, function(error){
                   if(error) {
                     console.log('window(FhirUtilities.pluralizeResourceName(resource.resourceType)).insert.error', error)
-                  }                    
-                });   
+                  }
+                });
               } else {
                 console.log('Found a pre-existing copy of the record.  Thats weird and probably shouldnt be happening.');
-              }  
+              }
             } else {
               console.log('Cursor doesnt appear to exist');
             }
 
-            return response;  
+            return response;
           } else {
             console.log('Received a request for a proxy insert, but no FHIR resource was attached to the received parameters object!');
           }
@@ -228,15 +228,15 @@ Meteor.methods({
           response = Collections[FhirUtilities.pluralizeResourceName(get(proxiedInsertRequest, 'resource.resourceType'))].insert(proxiedInsertRequest.resource, {validate: false, filter: false}, function(error){
             if(error) {
               console.log('window(FhirUtilities.pluralizeResourceName(resource.resourceType)).insert.error', error)
-            }                    
-          });   
+            }
+          });
         } else {
           console.log('Found a pre-existing copy of the record.  Thats weird and probably shouldnt be happening.');
-        }  
+        }
       } else {
         console.log('Cursor doesnt appear to exist');
       }
-    }    
+    }
   },
   // insert a FHIR resource into the data warehouse (i.e. proxy it to the Mongo database)
   insertResourceIntoWarehouse: function(proxiedInsertRequest){
@@ -246,7 +246,7 @@ Meteor.methods({
       if(proxiedInsertRequest){
         // we are running this, assuming that PubSub is in place and synchronizing data cursors
         console.log('ProxyInsert - Received a proxiedInsertRequest to add to the distributed database.', proxiedInsertRequest)
-          
+
         let response = false;
         // console.log('Collections', Collections)
 
@@ -262,11 +262,11 @@ Meteor.methods({
             response = Collections[FhirUtilities.pluralizeResourceName(get(proxiedInsertRequest, 'resourceType'))].insert(proxiedInsertRequest, {validate: false, filter: false}, function(error){
               if(error) {
                 console.log('window(FhirUtilities.pluralizeResourceName(resourceType)).insert.error', error)
-              }                    
-            });   
+              }
+            });
           } else {
             console.log('Found a pre-existing copy of the record.  Thats weird and probably shouldnt be happening.');
-          }  
+          }
         } else {
           console.log('Cursor doesnt appear to exist');
         }

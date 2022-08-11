@@ -38,7 +38,7 @@ import InflateAuto from 'inflate-auto';
 // import base64url from 'base64url';
 // import * as base64 from "byte-base64";
 
- 
+
 
 // import { SignJWT } from 'jose';
 
@@ -86,7 +86,7 @@ export function numericMode(inputString){
 
     inputArray.forEach(function(character, index){
         resultArray.push(zeroPad(inputString.charCodeAt(index) - 45, 2));
-    })    
+    })
 
     // console.log("numericMode().resultArray", resultArray);
 
@@ -115,7 +115,7 @@ export function decodeNumeric(shcString){
         if((index % 2) === 0){
             firstIndex = index;
             secondIndex = index + 1;
-        
+
             // console.log('firstIndex:          ' + firstIndex);
             // console.log('secondIndex:         ' + secondIndex);    
 
@@ -135,15 +135,15 @@ export function decodeNumeric(shcString){
                 // console.log('douplet:    ' + douplet);    
 
                 // console.log('douplet+45:   ' + (parseInt(douplet) + 45));
-                
+
                 ascii = String.fromCharCode((parseInt(douplet) + 45));
                 // console.log('ascii:      ' + ascii);    
 
-                resultArray.push(ascii);               
+                resultArray.push(ascii);
 
                 firstIndex = null;
                 secondIndex = null;
-        
+
             } else {
                 console.log("uh oh, wasnt a doublet.  how did that happen?")
             }
@@ -164,23 +164,23 @@ Meteor.methods({
         console.log('');
 
         console.log('');
-        console.log('---------------Verified Credential------------------------')        
+        console.log('---------------Verified Credential------------------------')
         console.log('');
         recordToSign.nbf = moment().add(1, "seconds").unix();
         console.log(recordToSign);
 
         console.log('');
-        console.log('---------------FHIR Bundle--------------------------------')        
-        console.log('');    
+        console.log('---------------FHIR Bundle--------------------------------')
+        console.log('');
         console.log(get(recordToSign, 'vc.credentialSubject.fhirBundle'));
 
         console.log('');
-        console.log('---------------Signing Key (PEM)--------------------------')        
+        console.log('---------------Signing Key (PEM)--------------------------')
         console.log('');
 
         // let privatePem = get(Meteor, 'settings.private.smart.healthcards.privatePem');
         // let privateJwkChain = JSON.parse(Assets.getText('private.jwks.json'));
-        
+
         // console.log(privateJwkChain);
         // console.log('');
 
@@ -195,7 +195,7 @@ Meteor.methods({
         console.log(privatePem);
 
         console.log('');
-        console.log('-----------Public Key (.well-known/jwks.json)-------------')        
+        console.log('-----------Public Key (.well-known/jwks.json)-------------')
         console.log('');
 
         console.log(publicKey);
@@ -222,7 +222,7 @@ Meteor.methods({
 
         // let deflatedPayload_btoa = btoa(deflatedPayload);
         // console.log(deflatedPayload_btoa);
-        
+
         // let json_web_signature = await jose.JWS
         //   .createSign({ format: 'compact', fields: { zip: 'DEF' }}, signingKey)
         //   .update(deflatedPayload)
@@ -242,7 +242,7 @@ Meteor.methods({
         console.log('------------JSON Web Signature (JWS)----------------------')
         console.log('');
 
-        console.log(json_web_signature)     
+        console.log(json_web_signature)
 
         Meteor.call('verifyHealthCard', json_web_signature);
 
@@ -277,8 +277,8 @@ Meteor.methods({
 
         console.log(json_web_signature)
 
-        console.log('')     
-        console.log('------------Decoded Signature-----------------------------')     
+        console.log('')
+        console.log('------------Decoded Signature-----------------------------')
         console.log('')
 
         // // quality control check
@@ -292,7 +292,7 @@ Meteor.methods({
 
         // let isVerified = jws.verify(json_web_signature, 'ES256', privatePem);
         let isVerified = jws.verify(json_web_signature, 'ES256', jwkToPem(publicKey));
-        console.log(isVerified ? "YES" : "NO")   
+        console.log(isVerified ? "YES" : "NO")
 
         console.log('')
         console.log('------------JWS Parts-------------------------------------')
@@ -309,7 +309,6 @@ Meteor.methods({
         const rawPayload = parts[1].trim();
         console.log(rawPayload);
 
-        
         // console.log('')
         // console.log('------------Payload Buffer--------------------------------')    
         // console.log('')
@@ -319,10 +318,9 @@ Meteor.methods({
         // console.log(buffer_from_payload);
 
         console.log('')
-        console.log('---------**-Payload Buffer (from base64)-**---------------')    
+        console.log('---------**-Payload Buffer (from base64)-**---------------')
         console.log('')
 
-        
         let buffer_from_base64_payload = Buffer.from(rawPayload, 'base64');
         console.log(buffer_from_base64_payload);
 
@@ -339,7 +337,6 @@ Meteor.methods({
         // console.log('------------Payload Buffer (from base64, atob)------------------')    
         // console.log('')
 
-        
         // let buffer_from_base64_atob_payload = Buffer.from(atob(rawPayload), 'base64');
         // console.log(buffer_from_base64_atob_payload);
 
@@ -356,7 +353,6 @@ Meteor.methods({
         // console.log('------------Payload Buffer (from base64, btoa)------------------')    
         // console.log('')
 
-        
         // let buffer_from_base64_btoa_payload = Buffer.from(btoa(rawPayload), 'base64');
         // console.log(buffer_from_base64_btoa_payload);
 
@@ -366,17 +362,16 @@ Meteor.methods({
         console.log('------------Decompressed Payload--------------------------')
         console.log('')
 
-            
-        const decompressed = zlib.inflateRawSync(buffer_from_base64_payload);    
-        const decompressed_string = decompressed.toString('utf8')      
-        console.log(decompressed_string); 
+        const decompressed = zlib.inflateRawSync(buffer_from_base64_payload);
+        const decompressed_string = decompressed.toString('utf8')
+        console.log(decompressed_string);
 
         return decompressed_string;
     },
     decodeHealthCard: async function(json_web_signature){
         check(json_web_signature, String);
         console.log('================DECODE HEALTHCARD==========================')
-        
+
         console.log(json_web_signature)
 
         console.log('')
@@ -400,11 +395,11 @@ Meteor.methods({
         console.log('')
         console.log('------------Decompressed Payload--------------------------')
         console.log('')
-        
-        const decompressed = zlib.inflateRawSync(buffer_from_base64_payload_atob);    
+
+        const decompressed = zlib.inflateRawSync(buffer_from_base64_payload_atob);
         // const decompressed = InflateAuto.inflateAutoSync(buffer_from_base64_payload_atob);    
-        const decompressed_string = decompressed.toString('utf8')      
-        console.log(decompressed_string); 
+        const decompressed_string = decompressed.toString('utf8')
+        console.log(decompressed_string);
 
     return decompressed_string;
     }

@@ -18,22 +18,22 @@
       "palette": {
         "primaryColor": "rgb(108, 183, 110)",
         "primaryText": "rgba(255, 255, 255, 1) !important",
-      
+
         "secondaryColor": "#fdb813",
         "secondaryText": "rgba(255, 255, 255, 1) !important",
-      
+
         "cardColor": "#ffffff !important",
         "cardTextColor": "rgba(0, 0, 0, 1) !important",
-      
+
         "errorColor": "rgb(128,20,60) !important",
         "errorText": "#ffffff !important",
-      
+
         "appBarColor": "#005b94",
         "appBarTextColor": "#ffffff !important",
-      
+
         "paperColor": "#ffffff !important",
         "paperTextColor": "rgba(0, 0, 0, 1) !important",
-      
+
         "backgroundCanvas": "#e6e6e6",
         "background": "linear-gradient(45deg, rgb(108, 183, 110) 30%, rgb(150, 202, 144) 90%)",
 
@@ -165,7 +165,7 @@
           "endpoint": "http://localhost:3000/"
         }
       },
-      "accountsServer": {      
+      "accountsServer": {
         "name": "Accounts Server",
         "database": "meteor",
         "host": "http://localhost",

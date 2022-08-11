@@ -9,10 +9,10 @@
 
  // This is the server-side memory storage for all the active sessions
  const __SESSIONS = {};
- 
+
  // The name of the cookie we use is fixed to "smart-sid"
  const COOKIE_NAME = "smart-sid";
- 
+
  // Every 10 seconds loop through all the sessions and delete those that are expired
  (function cleanUp() {
      let now = new Date();
@@ -24,21 +24,21 @@
      }
      setTimeout(cleanUp, 10000);
  })();
- 
+
  // Parse the cookie header and return the value of the COOKIE_NAME cookie (or null)
  function getSessionIdFromCookie(request) {
      let cookie = String(request.headers.cookie || "")
          .trim()
          .split(/\s*;\s*/)
          .find(token => token.split("=")[0] === COOKIE_NAME);
- 
+
      if (cookie) {
          return cookie.split("=")[1];
      }
- 
+
      return null;
  }
- 
+
  module.exports = class Session
  {
      static fromRequest(request) {
@@ -48,21 +48,21 @@
          }
          return null;
      }
- 
+
      static destroy(request) {
          let sid = getSessionIdFromCookie(request);
          if (sid && __SESSIONS[sid]) {
              delete __SESSIONS[sid];
          }
      }
- 
+
      constructor(sid, data = {}) {
          this.name = COOKIE_NAME;
          this.sid = sid || Crypto.randomBytes(16).toString("hex");
          this.data = data;
          this.touch();
      }
- 
+
      toJSON() {
          return {
              sid: this.sid,
@@ -71,7 +71,7 @@
              data: this.data
          };
      }
- 
+
      expire(after) {
          let exp = new Date(Date.now() + after);
          this.expires = exp;
@@ -83,26 +83,26 @@
          }
          return this;
      }
- 
+
      destroy() {
          return this.expire(-1000);
      }
- 
+
      touch() {
          return this.expire(1000 * 60 * 5);
      }
- 
+
      async set(key, value) {
          this.data[key] = value;
          this.touch();
          return value;
      }
- 
+
      async get(key) {
          this.touch();
          return this.data[key];
      }
- 
+
      async unset(key) {
          this.touch();
          if (this.data.hasOwnProperty(key)) {
@@ -112,4 +112,4 @@
          return false;
      }
  };
- 
+

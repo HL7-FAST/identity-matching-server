@@ -249,13 +249,13 @@ JsonRoutes.add('post', '/node-launch', function (req, res, next) {
 function precheckThenCreateRecord(record, resourceType){
     console.log('Prechecking record', record);
     if(!Collections[FhirUtilities.pluralizeResourceName(resourceType)].findOne({id: get(record, 'data.id')})){
-        console.log(resourceType + ' not found.  Creating a new record.....')        
-        Collections[FhirUtilities.pluralizeResourceName(resourceType)].insert(record, get(Meteor, 'settings.private.fhir.schemaValidation', {validate: false, filter: false}), function(err, result){
+        console.log(resourceType + ' not found.  Creating a new record.....')
+        Collections[FhirUtilities.pluralizeResourceName(resourceType)].insert(record, get(Meteor, 'settings.private.fhir.schemaValidation', {validate: false, filter: false}), function(err, result) {
             if(err){console.log('err', err)}
             if(result){console.log('result', result)}
         });
     } else {
-        console.log(resourceType + ' already exists.')        
+        console.log(resourceType + ' already exists.')
     }
 }
 function parseBundleIntoCollection(bundle, resourceType){
@@ -264,23 +264,22 @@ function parseBundleIntoCollection(bundle, resourceType){
         console.log('Checking that the ' + FhirUtilities.pluralizeResourceName(resourceType) + ' collection exists: ' + typeof Collections[FhirUtilities.pluralizeResourceName(resourceType)]);
         if(Array.isArray(bundle.entry)){
             bundle.entry.forEach(function(entry){
-                if(get(entry.resource, 'verificationStatus.text') !== "Entered in Error"){      
+                if(get(entry.resource, 'verificationStatus.text') !== "Entered in Error"){
                     if(Collections[FhirUtilities.pluralizeResourceName(resourceType)].findOne({id: get(entry.resource, 'id')})){
-                        console.log(resourceType + ' already exists.')        
+                        console.log(resourceType + ' already exists.')
                     } else {
                         Collections[FhirUtilities.pluralizeResourceName(resourceType)].insert(entry.resource, get(Meteor, 'settings.private.fhir.schemaValidation', {validate: false, filter: false}), function(err, result){
                             if(err){console.log('err', err)}
                             if(result){
-                                console.log(resourceType + ' not found.  Creating it.  New record id: ' + result)     
+                                console.log(resourceType + ' not found.  Creating it.  New record id: ' + result)
                             }
-                        });                    
-                    }    
+                        });
+                    }
                 } else {
-                    console.log(resourceType + ' appears to be Entered in Error.  Skipping.')     
+                    console.log(resourceType + ' appears to be Entered in Error.  Skipping.')
                 }
             })
         }
-        
     }
 }
 
@@ -308,7 +307,6 @@ JsonRoutes.add('get', '/node-fhir-receiver', function (req, res, next) {
     let relaySearchParams = new URLSearchParams(req.query);
     console.log('relaySearchParams', relaySearchParams.toString())
 
-    
     console.log('Fetching patient protected health information....')
     smart(interceptedReq, res, getStorage).ready()
         .then(async function(client){
@@ -354,7 +352,6 @@ JsonRoutes.add('get', '/node-fhir-receiver', function (req, res, next) {
             //         })
             //     }
             // }
-            
 
             // you can try enabling the other observation categories
             // but its not clear if Epic/Cerner support them
@@ -391,13 +388,13 @@ JsonRoutes.add('get', '/node-fhir-receiver', function (req, res, next) {
             if(get(json.patient, 'resourceType') === "Patient"){
                 console.log('Received a Patient')
                 if(!Patients.findOne({id: get(json.patient, 'id')})){
-                    console.log('Patient not found.  Inserting a new patient.....')        
+                    console.log('Patient not found.  Inserting a new patient.....')
                     Patients.insert(json.patient, get(Meteor, 'settings.private.fhir.schemaValidation', {validate: false, filter: false}), function(err, result){
                         if(err){console.log('err', err)}
                         if(result){console.log('result', result)}
-                    });                    
+                    });
                 } else {
-                    console.log('Patient already exists.')        
+                    console.log('Patient already exists.')
                 }
             }
 

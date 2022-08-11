@@ -710,28 +710,28 @@ Meteor.startup(async function(){
               value: get(createdUser, 'emails[0].address')
             }
           }
-  
+
           console.log('AccountsServer.newPractitioner', newPractitioner)
-  
+
           let practitionerAlreadyExists = Practitioners.findOne({id: newPractitioner.id})
           console.log('AccountsServer.findOne(newPractitioner)', newPractitioner)
-  
+
           if(!practitionerAlreadyExists){
             let patientInternalId = Practitioners.insert(newPractitioner)
             console.log('AccountsServer.newPractitionerId', patientInternalId);
 
             if(Package["clinical:hipaa-logger"]){
-              let newAuditEvent = { 
+              let newAuditEvent = {
                 "resourceType" : "AuditEvent",
-                "type" : { 
+                "type" : {
                   'code': 'Register User',
                   'display': 'Register User'
-                  }, 
+                  },
                 "action" : 'Registration',
-                "recorded" : new Date(), 
+                "recorded" : new Date(),
                 "outcome" : "Success",
                 "outcomeDesc" : 'User registered.',
-                "agent" : [{ 
+                "agent" : [{
                   "name" : FhirUtilities.pluckName(newPractitioner),
                   "who": {
                     "display": FhirUtilities.pluckName(newPractitioner),
@@ -739,11 +739,11 @@ Meteor.startup(async function(){
                   },
                   "requestor" : false
                 }],
-                "source" : { 
+                "source" : {
                   "site" : Meteor.absoluteUrl(),
                   "identifier": {
                     "value": Meteor.absoluteUrl(),
-  
+
                   }
                 },
                 "entity": [{
@@ -752,9 +752,9 @@ Meteor.startup(async function(){
                   }
                 }]
               };
-  
+
               console.log('Logging a hipaa event...', newAuditEvent)
-              let hipaaEventId = HipaaLogger.logAuditEvent(newAuditEvent)            
+              let hipaaEventId = HipaaLogger.logAuditEvent(newAuditEvent)
             }
           }
         }
@@ -789,9 +789,6 @@ Meteor.startup(async function(){
       //   (error.code === CreateUserErrors.EmailAlreadyExists ||
       //     error.code === CreateUserErrors.UsernameAlreadyExists)
       // ) 
-      
-      
-
 
       // if(!accountsServer.options.ambiguousErrorMessages){
       //   dataPayload = {

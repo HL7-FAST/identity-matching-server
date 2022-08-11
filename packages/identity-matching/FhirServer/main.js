@@ -30,9 +30,9 @@ Meteor.startup(function(){
   // pick up version info
   try {
     var version = {};
-    version = JSON.parse(Assets.getText("version.json"));    
+    version = JSON.parse(Assets.getText("version.json"));
     Meteor.settings.public.version = version;
-  } catch(e) { 
+  } catch(e) {
     Meteor.settings.public.version = {};
   }
   console.log('Meteor.settings.public.version', Meteor.settings.public.version)
@@ -68,14 +68,14 @@ Meteor.startup(function(){
     BrowserPolicy.content.allowImageOrigin("blob:")
     BrowserPolicy.content.allowEval();
     BrowserPolicy.content.allowInlineScripts()
-    BrowserPolicy.content.allowInlineStyles()  
-  
+    BrowserPolicy.content.allowInlineStyles()
+
     BrowserPolicy.content.allowObjectOrigin( 'zygotebody.com' );
     BrowserPolicy.content.allowFrameOrigin('zygotebody.com');
     BrowserPolicy.content.allowObjectDataUrl('zygotebody.com');
     BrowserPolicy.content.allowOriginForAll('zygotebody.com');
     BrowserPolicy.content.allowConnectOrigin("zygotebody.com")
-    BrowserPolicy.content.allowImageOrigin("zygotebody.com")   
+    BrowserPolicy.content.allowImageOrigin("zygotebody.com")
 
     BrowserPolicy.content.allowConnectOrigin('http://localhost:3000');
     BrowserPolicy.content.allowConnectOrigin('ws://localhost:3000');
