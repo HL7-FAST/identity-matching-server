@@ -14,7 +14,14 @@ const ERROR_CODES = {
   "profile not met": 2
 };
 
-const MATCHING_SCORE_THRESHOLD = 0.0;
+// const MATCHING_SCORE_THRESHOLD = 0.0;
+
+const MATCHING_SCORE_THRESHOLDS = {
+		"best": 0.99,
+		"superior": 0.8,
+		"very good": 0.7,
+		"good":  0.6
+}
 
 
 // Decide if a Patient record is a match or not
@@ -31,9 +38,16 @@ function isMatch(patient, params, level) {
 		to return them all to the client. Later the results are sorted and
 		sliced to client-requested limit.
      */
-	if( calculateScore(patient, params) > MATCHING_SCORE_THRESHOLD ) {
+	let matchLevel = MATCHING_SCORE_THRESHOLDS[level];
+	console.log("matchLevel: ", matchLevel);
+	// if (!!matchLevel) {
+	// 	return false;
+	// }
+	let score = calculateScore(patient, params);
+	if( score >= matchLevel ) {
 		return true;
 	}
+	return false;
 }
 
 // Actual $match logic
@@ -44,7 +58,43 @@ function isMatch(patient, params, level) {
 //    float: true if match, false if not
 function calculateScore(patient, params) {
 	// TODO
-	return 99.9;
+	let score = 0;
+	console.log("first score: ", score);
+	// console.log("params: ", params);
+	// console.log("patient: ", patient);
+	if (fieldExists(patient, params, 'name[0].family')  &&
+	 		(fieldExists(patient, params, 'name[0].given[0]'))) {
+			let paramName = get(params, 'name[0].family') + get(params, 'name[0].given[0]');
+			let patientName = get(patient, 'name[0].family') + get(patient, 'name[0].given[0]');
+			console.log("paramName: ", paramName);
+			console.log("patientName: ", patientName);
+			if (paramName == patientName) {
+				score += 0.4;
+			}
+		}
+	if (!!get(params, 'identifier') && !!get(patient, 'identifier')) {
+			console.log("score so far: ", score);
+			get(params, 'identifier').map(function(identifier){
+				get(patient, 'identifier').map(function(ident, index){
+					if (ident["type"]["coding"][0]["code"] == identifier["type"]["coding"][0]["code"]){
+						if (ident["value"] == identifier["value"]){
+							score +=0.4;
+						}
+					}
+				});
+		});
+	}
+	if (fieldExists(patient, params, 'gender') && (get(params, 'gender') == get(patient, 'gender'))) {
+		score += 0.05;
+	}
+	if ((fieldExists(patient, params, 'birthDate')) && ((get(params, 'birthDate').startsWith(get(patient, 'birthDate')) ||
+																											(get(patient, 'birthDate').startsWith(get(params, 'birthDate')))
+																											)))
+	{
+		score += 0.2-(0.05*Math.abs(get(params, 'birthDate').length-get(patient, 'birthDate').length)/3);
+	}
+	console.log("score", score);
+	return score;
 }
 
 
@@ -112,6 +162,9 @@ function hasName(patientResource) {
 	return has(patientResource, "name[0].family") && has(patientResource, "name[0].given[0]");
 }
 
+function fieldExists(param1, param2, queryString) {
+	return ((!!get(param1, queryString)) && !!(get(param2, queryString)));
+}
 // calculateWeight
 // params:
 //	 patientResource: IDIPatient profile FHIR resource
@@ -187,10 +240,15 @@ function calculateWeight(patientResource) {
 	return total;
 }
 
+function matchName(name1, name2) {
+	name1
+}
+
 
 module.exports = {
   validateMinimumRequirement,
   calculateWeight,
   calculateScore,
-  isMatch
+  isMatch,
+	MATCHING_SCORE_THRESHOLDS
 }

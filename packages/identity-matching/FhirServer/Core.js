@@ -1,4 +1,4 @@
-import {isMatch, calculateScore, validateMinimumRequirement, calculateWeight} from '../lib/MatchUtilties.js'
+import {isMatch, calculateScore, validateMinimumRequirement, calculateWeight, MATCHING_SCORE_THRESHOLDS} from '../lib/MatchUtilties.js'
 
 import RestHelpers from './RestHelpers';
 import fhirPathToMongo from './FhirPath';
@@ -1669,11 +1669,10 @@ if(typeof serverRouteManifest === "object"){
             // post /Patient/$match
             } else if (req.params.param.includes('$match')) {
               console.log("$MATCH!!!!");
-
               //console.log('req.body.parameter[0]', get(req, 'body.parameter[0].resource'));
               let matchParams = get(req, 'body.parameter[0].resource');
 			  let matchingRecords = [];
-			  let matchScores = []
+			  let matchScores = [];
 
               //let fullName = get(matchParams, 'name[0].family') + get(matchParams, 'name[0].given[0]');
               //console.log('name:', fullName);
@@ -1713,7 +1712,8 @@ if(typeof serverRouteManifest === "object"){
 			  }
 
 			  Patients.find().forEach(function (record, idx, cursor) {
-				if( isMatch(record, matchParams, 0) ) {
+          console.log(get(record, 'gender'));
+				if( isMatch(record, matchParams, "good") ) {
 					console.log("Found matching record at", idx);
 					matchingRecords.push(record);
 					matchScores.push( calculateScore(record, matchParams) );
