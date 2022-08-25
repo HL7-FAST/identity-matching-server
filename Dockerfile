@@ -14,7 +14,7 @@ USER meteor
 WORKDIR /home/meteor
 
 # Install Meteor
-#RUN npm install meteor
+#RUN curl https://install.meteor.com/ -k | sh
 
 # Install Bundler
 RUN mkdir /home/meteor/.bundle
@@ -31,7 +31,8 @@ RUN npm config set strict-ssl false
 RUN npm ci
 
 # Let container be executable
-ENTRYPOINT entrypoint.sh
+#ENTRYPOINT entrypoint.sh
 
 # Start server
+RUN chmod -R 700 .meteor/local
 CMD meteor run --settings configs/settings.nodeonfhir.localhost.json
