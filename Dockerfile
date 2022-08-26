@@ -6,4 +6,4 @@ WORKDIR /home/mt
 
 COPY --chown=mt . app/
 EXPOSE 3000:3000
-RUN	cd app && meteor deploy
+CMD	cd app && meteor run --settings configs/settings.nodeonfhir.localhost.json
