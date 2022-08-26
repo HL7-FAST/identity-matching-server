@@ -75,10 +75,11 @@ namespace :seed do
     task :bundle, [:filename] do |t, args|
         json = File.read(args.filename)
         bundle = FHIR.from_contents(json)
+        total = bundle.entry.length
         bundle.entry.map(&:resource).each_with_index do |resource, i|
             if resource.resourceType == 'Patient'
                 response = RestClient.post(CREATE_PATIENT_URL, resource.to_json, {'Content-Type' => 'application/fhir+json', 'Content-Length' => resource.to_json.length})
-                put_status(response, "created entry #{i}/#{bundle.entry.length} (code = #{response.code})", "error on entry #{i}/#{bundle.entry.length} (code = #{response.code})")
+                put_status(response, "created entry #{i + 1}/#{total} (code = #{response.code})", "error on entry #{i + 1}/#{total} (code = #{response.code})")
             end
         end
     end
