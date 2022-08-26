@@ -1,5 +1,8 @@
 FROM meteor/meteor-base:20211013T200759Z_489f5fe
 
+USER root
+RUN apt-get install -y git
+
 USER mt
 WORKDIR /home/mt
 
