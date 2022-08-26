@@ -1,4 +1,4 @@
-import {isMatch, calculateScore, validateMinimumRequirement, calculateWeight, MATCHING_SCORE_THRESHOLDS} from '../lib/MatchUtilties.js'
+import {isMatch, calculateScore, validateMinimumRequirement, calculateWeight, MATCHING_SCORE_THRESHOLDS, matchGrade} from '../lib/MatchUtilties.js'
 
 import RestHelpers from './RestHelpers';
 import fhirPathToMongo from './FhirPath';
@@ -1755,9 +1755,17 @@ if(typeof serverRouteManifest === "object"){
                   payload.push({
                     fullUrl: routeResourceType + "/" + get(record, 'id'),
                     resource: RestHelpers.prepForFhirTransfer(record),
+                    search: {
+                      "extension": [{
+                        "url": "http://hl7.org/fhir/StructureDefinition/match-grade",
+                        "valueCode": matchGrade(matchScores[index])
+                      }],
+                      mode: "match",
+                      score: matchScores[index]
+                    },
                     request: {
                       method: "POST",
-                      url: '/' + fhirPath + '/' + routeResourceType + '/' + JSON.stringify(req.query)
+                      url: '/' + fhirPath + '/' + routeResourceType + '/' + req.params.param
                     },
                     response: {
                       status: "200"

@@ -244,11 +244,26 @@ function matchName(name1, name2) {
 	name1
 }
 
+// assign a value from MatchGrade code system based on score
+// https://terminology.hl7.org/ValueSet-match-grade.html
+function matchGrade(score) {
+    if( score >= MATCHING_SCORE_THRESHOLDS.best ) {
+        return new String("certain");
+    }
+    else if( score >= MATCHING_SCORE_THRESHOLDS.superior ) {
+        return new String("probable");
+    }
+    else if( score >= MATCHING_SCORE_THRESHOLDS.good ) {
+        return new String("possible");
+    }
+    else return new String("certainly-not");
+}
 
 module.exports = {
   validateMinimumRequirement,
   calculateWeight,
   calculateScore,
   isMatch,
-	MATCHING_SCORE_THRESHOLDS
+  MATCHING_SCORE_THRESHOLDS,
+  matchGrade
 }
