@@ -2,12 +2,14 @@
 
 require 'json'
 require 'rest-client'
+require 'fhir_models'
 
 task default: %w[help]
 
 
 ## ========= Server endpoints (UPDATE THESE) ====================================================
-CREATE_PATIENT_URL = "http://127.0.0.1:3000/baseR4/Patient" # assumes POST
+INDEX_PATIENT_URL = "http://127.0.0.1:3000/baseR4/Patient"      # assumes GET
+CREATE_PATIENT_URL = "http://127.0.0.1:3000/baseR4/Patient"     # assumes POST
 DELETE_PATIENT_URL = "http://127.0.0.1:3000/baseR4/Patient/:id" # assumes DELETE
 
 
@@ -24,6 +26,14 @@ def for_each_json_fixture(&block)
 	end
 end
 
+# report rest api call status
+def put_status(response, success_msg = "success", error_msg = "error")
+	if response.code >= 200 && response.code < 300 or (response.code == 303)
+		puts success_msg
+	else
+        puts error_msg
+	end
+end
 
 ## ========= Tasks ==============================================================================
 
@@ -31,19 +41,23 @@ desc "Print help information for Rake (Ruby Make)"
 task :help do
 	puts <<~EOS
 		Rake (Ruby Make) tasks for Identity Matching Server.
-		Go to #{__FILE__} and set your server endpoints.
+		Go to #{__FILE__} line 10 and set your server endpoints.
 		First launch server as listed in README, then run the commands below as needed:
 
 		$ rake --tasks
 		# => print available tasks and descriptions
 
 		$ rake seed
-		# => send POST requests to seed database with FHIR patients from fixtures/
+		# => send POST requests to seed server with all FHIR patients from fixtures/patients/
+
+        $ rake "seed:bundle[/path/to/bundle/file]"
+        # => sends POST request for each patient entry in FHIR bundle to create entire bundle
 
 		$ rake drop
-		# => delete all FHIR patients from fixtures/ in database
+		# => delete all FHIR patients from server
 
-		Note the operations depend on the top level "id" field in each json file in fixtures/.
+    	$ rake help
+		# => print this message
 	EOS
 end
 
@@ -52,25 +66,32 @@ task :seed do
 	for_each_json_fixture do |filename, json|
 		print "Creating #{filename} ... "
 		response = RestClient.post(CREATE_PATIENT_URL, json, {'Content-Type' => 'application/fhir+json', 'Content-Length' => json.length})
-		if response.code >= 200 && response.code < 300 or (response.code == 303)
-			print "success (code = #{response.code})\n"
-		else
-			print "failed (code = #{response.code})\n"
-		end
+        put_status(response, "success (code = #{response.code})", "error (code = #{response.code})")
 	end
+end
+
+namespace :seed do
+    desc "create FHIR patients from a bundle"
+    task :bundle, [:filename] do |t, args|
+        json = File.read(args.filename)
+        bundle = FHIR.from_contents(json)
+        bundle.entry.map(&:resource).each_with_index do |resource, i|
+            if resource.resourceType == 'Patient'
+                response = RestClient.post(CREATE_PATIENT_URL, resource.to_json, {'Content-Type' => 'application/fhir+json', 'Content-Length' => resource.to_json.length})
+                put_status(response, "created entry #{i}/#{bundle.entry.length} (code = #{response.code})", "error on entry #{i}/#{bundle.entry.length} (code = #{response.code})")
+            end
+        end
+    end
 end
 
 desc "delete all FHIR patients from fixtures/ in database"
 task :drop do
-	for_each_json_fixture do |filename, json|
-		id = JSON.parse(json).fetch("id")
-		raise "Error - FHIR artifact #{filename} must have id" if !id
-		delete_url = DELETE_PATIENT_URL.gsub(':id', id)
+    response = RestClient.get(INDEX_PATIENT_URL, headers: {'Accept' => 'application/fhir+json'})
+    bundle = FHIR.from_contents( response.body )
+    bundle.entry.map(&:resource).each do |resource|
+        print "Deleting patient #{resource.id} ... "
+		delete_url = DELETE_PATIENT_URL.gsub(':id', resource.id)
 		response = RestClient.delete(delete_url)
-		if response.code >= 200 && response.code < 300 or (response.code == 303)
-			puts "Success DELETE #{delete_url}"
-		else
-			puts "Error DELETE #{delete_url} for #{filename}"
-		end
+        put_status(response)
 	end
 end
