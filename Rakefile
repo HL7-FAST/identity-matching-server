@@ -44,19 +44,19 @@ task :help do
 		Go to #{__FILE__} line 10 and set your server endpoints.
 		First launch server as listed in README, then run the commands below as needed:
 
-		$ rake --tasks
+		$ bundle exec rake --tasks
 		# => print available tasks and descriptions
 
-		$ rake seed
+		$ bundle exec rake seed
 		# => send POST requests to seed server with all FHIR patients from fixtures/patients/
 
-        $ rake "seed:bundle[/path/to/bundle/file]"
-        # => sends POST request for each patient entry in FHIR bundle to create entire bundle
+		$ bundle exec rake "seed:bundle[/path/to/bundle/file]"
+		# => sends POST request for each patient entry in FHIR bundle to create entire bundle
 
-		$ rake drop
+		$ bundle exec rake drop
 		# => delete all FHIR patients from server
 
-    	$ rake help
+		$ bundle exec rake help
 		# => print this message
 	EOS
 end
