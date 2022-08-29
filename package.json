@@ -76,6 +76,7 @@
     "fhir-kit-client": "1.5.3",
     "fhir-starter": "0.13.6",
     "fhirclient": "2.4.0",
+    "file-saver": "https://github.com/eligrey/FileSaver.js/tarball/5bb701bd6ea05a02836daf8ef88ec350a1dd4d83",
     "formik": "^2.1.5",
     "got": "11.8.2",
     "inflate-auto": "^2.1.0",
