@@ -85,7 +85,7 @@ namespace :seed do
     end
 end
 
-desc "delete all FHIR patients from fixtures/ in database"
+desc "delete all FHIR patients from server"
 task :drop do
     response = RestClient.get(INDEX_PATIENT_URL, headers: {'Accept' => 'application/fhir+json'})
     bundle = FHIR.from_contents( response.body )
