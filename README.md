@@ -2,6 +2,8 @@
 
 This application is a FHIR reference implementation server for the [security](http://build.fhir.org/ig/HL7/fhir-udap-security-ig/) and [identity matching](http://build.fhir.org/ig/HL7/fhir-identity-matching-ig/) implementation guides.
 
+By default OAuth2 and UDAP security is currently disabled.
+
 ## Dependencies
  - [npm](https://www.npmjs.com/)
  - [bundler](https://bundler.io/) (optional)
