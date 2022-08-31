@@ -4,7 +4,7 @@ This application is a FHIR reference implementation server for the [security](ht
 
 ## Dependencies
  - [npm](https://www.npmjs.com/)
- - [bundler](https://bundler.io/)
+ - [bundler](https://bundler.io/) (optional)
 
 ## Quickstart
 ```bash
@@ -32,9 +32,41 @@ bundle exec rake seed
 http POST "localhost:3000/baseR4/Patient/\$match" "accept:application/fhir+json" @fixtures/parameters/example1.json
 ```
 
+## Server Routes
+
+Here are the key endpoints available on the server, where `[]` denotes HTTP body in FHIR JSON:
+
+```http
+GET /                                     # => renders html home page
+GET /metadata                             # => fhir capability statement
+GET /baseR4/metadata                      # => same exact capability statement
+GET /baseR4/Patient                       # => fhir bundle of all patients
+GET /baseR4/Patient/1                     # => fhir patient with id 1
+POST /baseR4/Patient [fhir patient]       # => create patient
+DELETE /baseR4/Patient/1                  # => delete patient with id 1
+POST /baseR4/Patient/$match [fhir params] # => preform match operation
+```
+
 ## How it works:
 
 This application is MeteorJS app with builtin FHIR support and Rake for tooling. The `rake seed` command creates all FHIR patients in fixtures/patients/ in database. The file fixtures/parameters/example1.json is the POST body for an example `/baseR4/Patient/$match` call. File packages/identity-matching/FhirServer/Core.js actually implements the server in NodeJS, with full Patient RESTful CRUD support. All the functionality for `$match` is modularized into packages/identity_matching/lib/MatchUtilties.js file, and the file configs/settings.nodeonfhir.localhost.json controls security features such as enabling OAuth2. OAuth2 is disabled by default.
+
+## Rake tooling
+We included the following rake commands to help development, which requires Ruby and bundler to use:
+
+Run `bundle install` to setup rake once.
+
+```ruby
+bundle exec rake --tasks                          # => list all tasks
+bundle exec rake seed                             # => populate server with all FHIR resources in fixtures/patients/
+bundle exec rake seed:bundle[path/to/fhir/bundle] # => populate server with all Patient resources in a give FHIR Bundle JSON file
+bundle exec rake drop                             # => delete all Patients on server
+```
+
+## Node-On-Fhir Module Hack
+_If you want to have Patient matching as a module on an existing Node-On-Fhir server:_
+
+Copy packages/identity-matching into my-node-on-fhir-server/packages/ as drop-in for clinical:vault-server for providing core FHIR R4 functionality and run meteor add clinical:vault-server. You should get a message saying its already added.
 
 ## Important Links
 - [License](https://github.com/symptomatic/node-on-fhir/blob/master/LICENSE.md)
@@ -50,7 +82,6 @@ This application is MeteorJS app with builtin FHIR support and Rake for tooling.
 - [Quality Control](https://circleci.com/gh/symptomatic/node-on-fhir)  
 - [Material UI](https://material-ui.com/store/) 
 - [The 12-Factor App Methodology Explained](https://www.bmc.com/blogs/twelve-factor-app/)  
-
 
 ## Technology Stack
 
