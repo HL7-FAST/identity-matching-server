@@ -1,4 +1,4 @@
-name: Docker
+name: Docker Image CD (Publish)
 
 # This workflow uses actions that are not certified by GitHub.
 # They are provided by a third-party and are governed by
@@ -47,7 +47,9 @@ jobs:
 
       # Workaround: https://github.com/docker/build-push-action/issues/461
       - name: Setup Docker buildx
-        uses: docker/setup-buildx-action@79abd3f86f79a9d68a23c75a09a9a85889262adf
+        uses: docker/setup-buildx-action@v1
+        with:
+          version: 'v0.7.0'
 
       # Login against a Docker registry except on PR
       # https://github.com/docker/login-action
