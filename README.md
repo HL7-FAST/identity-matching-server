@@ -7,6 +7,7 @@ By default OAuth2 and UDAP security is currently disabled.
 ## Dependencies
  - [npm](https://www.npmjs.com/)
  - [bundler](https://bundler.io/) (optional)
+ - OR: [docker](https://www.docker.com/) (alternative)
 
 ## Quickstart
 ```bash
@@ -69,6 +70,15 @@ bundle exec rake drop                             # => delete all Patients on se
 _If you want to have Patient matching as a module on an existing Node-On-Fhir server:_
 
 Copy packages/identity-matching into my-node-on-fhir-server/packages/ as drop-in for clinical:vault-server for providing core FHIR R4 functionality and run meteor add clinical:vault-server. You should get a message saying its already added.
+
+## Run on Docker
+If you are a member of HL7-Fast you can access our cross-platform Docker image via:
+```bash
+# Make sure you are running Docker daemon
+docker login ghcr.io
+# Enter GitHub username and PAT
+docker pull ghcr.io/hl7-fast/identity-matching-server:development
+```
 
 ## Important Links
 - [License](https://github.com/symptomatic/node-on-fhir/blob/master/LICENSE.md)
