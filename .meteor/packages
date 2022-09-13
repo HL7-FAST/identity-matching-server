@@ -68,3 +68,4 @@ clinical:uscore
 # symptomatic:data-importer
 
 clinical:vault-server
+hl7-fast:identity-matching
