@@ -1,0 +1,3 @@
+[submodule "packages/identity-matching"]
+	path = packages/identity-matching
+	url = https://github.com/HL7-FAST/identity-matching-module.git
