@@ -18,10 +18,10 @@ npm install -g meteor
 
 # clone repository & submodule
 git clone https://github.com/HL7-FAST/identity-matching-server.git --recursive
+cd identity-matching-server
 git submodule update --init --recursive  # for older versions of git
 
-# move into repository and install libraries
-cd identity-matching-server
+# install libraries
 npm ci
 
 # launch server
