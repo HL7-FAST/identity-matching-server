@@ -96,18 +96,18 @@ In order to run this application, you will need to have installed node versions 
 
 ## Important Links
 - [License](https://github.com/symptomatic/node-on-fhir/blob/master/LICENSE.md)
-- [Change Log / Release History](https://github.com/symptomatic/node-on-fhir/releases)  
-- [Installation](https://github.com/symptomatic/node-on-fhir/blob/master/INSTALLATION.md)  
-- [Configuration Settings](https://github.com/symptomatic/node-on-fhir/blob/master/API.md)  
+- [Change Log / Release History](https://github.com/symptomatic/node-on-fhir/releases)
+- [Installation](https://github.com/symptomatic/node-on-fhir/blob/master/INSTALLATION.md)
+- [Configuration Settings](https://github.com/symptomatic/node-on-fhir/blob/master/API.md)
 - [Meteor Guide](https://guide.meteor.com/)
 - [Getting Started with FHIR](https://www.hl7.org/fhir/modules.html).
 - [Software Development Kit](https://github.com/symptomatic/software-development-kit)
-- [Contributing](https://github.com/symptomatic/node-on-fhir/blob/master/CONTRIBUTING.md)  
-- [Code of Conduct](https://github.com/symptomatic/node-on-fhir/blob/master/CODE_OF_CONDUCT.md)  
-- [Community Bridge Funding](https://funding.communitybridge.org/projects/node-on-fhir)  
-- [Quality Control](https://circleci.com/gh/symptomatic/node-on-fhir)  
-- [Material UI](https://material-ui.com/store/) 
-- [The 12-Factor App Methodology Explained](https://www.bmc.com/blogs/twelve-factor-app/)  
+- [Contributing](https://github.com/symptomatic/node-on-fhir/blob/master/CONTRIBUTING.md)
+- [Code of Conduct](https://github.com/symptomatic/node-on-fhir/blob/master/CODE_OF_CONDUCT.md)
+- [Community Bridge Funding](https://funding.communitybridge.org/projects/node-on-fhir)
+- [Quality Control](https://circleci.com/gh/symptomatic/node-on-fhir)
+- [Material UI](https://material-ui.com/store/)
+- [The 12-Factor App Methodology Explained](https://www.bmc.com/blogs/twelve-factor-app/)
 
 ## Technology Stack
 
