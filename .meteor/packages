@@ -67,5 +67,5 @@ clinical:uscore
 # symptomatic:data-relay
 # symptomatic:data-importer
 
-clinical:vault-server
 hl7-fast:identity-matching
+clinical:vault-server
