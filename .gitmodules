@@ -1,3 +1,6 @@
 [submodule "packages/identity-matching"]
 	path = packages/identity-matching
 	url = https://github.com/HL7-FAST/identity-matching-module.git
+[submodule "packages/vault-server"]
+	path = packages/vault-server
+	url = https://github.com/clinical-meteor/vault-server
