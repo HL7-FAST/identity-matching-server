@@ -91,6 +91,8 @@ docker login ghcr.io
 # Enter GitHub username and PAT
 docker pull ghcr.io/hl7-fast/identity-matching-server:development
 ```
+## Note For Windows Users
+In order to run this application, you will need to have installed node versions 14.0 and lower.
 
 ## Important Links
 - [License](https://github.com/symptomatic/node-on-fhir/blob/master/LICENSE.md)
